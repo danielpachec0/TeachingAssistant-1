@@ -44,10 +44,20 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
   }
 })
 
+
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var aluno: Aluno = <Aluno> req.body;
+  var media: Number = calcular_media(aluno)
+  var situacao: String = ""
   try {
-    sendNotas(aluno, "teste", "teste")
+    if(media >= 7) {
+      situacao = "Aprovado por média"
+    } else if (media >= 3) {
+      situacao = "Final"
+    } else {
+      situacao = "Reprovado por média"
+    }
+    sendNotas(aluno, "[Média Final]", `Sua média final foi: ${media}\nSituação:${situacao}`)
   } catch (err) {
     console.log(err)
   }
@@ -57,6 +67,16 @@ taserver.post("/sendnotas", function (req: express.Request, res: express.Respons
 var server = taserver.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
+
+function calcular_media(aluno: Aluno): Number {
+  var mean = 0
+  var length = Object.keys(aluno.metas).length
+  for (let key in aluno.metas) {
+    let value = aluno.metas[key]
+    mean += value
+  }
+  return mean/length
+}
 
 async function sendNotas(aluno: Aluno, subject: string,text: string): Promise<void> {
 
