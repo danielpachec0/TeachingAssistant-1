@@ -8,7 +8,7 @@
         "removeComments": false,
         "noImplicitAny": false,
         "outDir": "compiledCode",
-        "typeRoots": [ "./node_modules/@types" ],
+        "typeRoots": [ "node ./node_modules/@types" ],
         "types": ["node","cucumber"]
     },
     "exclude": [
