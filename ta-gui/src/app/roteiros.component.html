@@ -18,13 +18,14 @@
 <table>
   <tr *ngIf="roteiros.length > 0">
     <th>Nome</th>
-    <th>CPF</th>
-    <th>e-mail</th>
+    <th>Data de entrega</th>
+
   </tr>
   <tr *ngFor="let r of roteiros" name="alunolist">
     <td name="nomelist">{{r.nome}}</td>
     <td name="datelist">{{r.dataDeEntrega}}</td>
   </tr>
 </table>
+
 
 </html>
