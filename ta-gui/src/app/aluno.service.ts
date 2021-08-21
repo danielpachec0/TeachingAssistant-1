@@ -36,7 +36,7 @@ export class AlunoService {
   }
 
   enviarRelatorio(aluno: Aluno): Observable<any> {
-    return this.http.post<any>(this.taURL + `/sendnotas`, aluno)
+    return this.http.post<any>(this.taURL + `/sendnotas`, aluno, {headers: this.headers})
       .pipe(
         retry(2),
         map(res => {if (res.success) {return aluno; } else {return null; }})

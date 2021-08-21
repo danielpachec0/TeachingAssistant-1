@@ -58,10 +58,12 @@ taserver.post("/sendnotas", function (req: express.Request, res: express.Respons
       situacao = "Reprovado por média"
     }
     sendNotas(aluno, "[Média Final]", `Sua média final foi: ${media}\nSituação:${situacao}`)
+    res.send({"success": "O relatório foi enviado com sucesso"});
   } catch (err) {
     console.log(err)
+    res.send({"failure": "O relatório não pôde ser enviado"});
   }
-  res.send();
+
 })
 
 var server = taserver.listen(3000, function () {
@@ -72,7 +74,7 @@ function calcular_media(aluno: Aluno): Number {
   var mean = 0
   var length = Object.keys(aluno.metas).length
   for (let key in aluno.metas) {
-    let value = aluno.metas[key]
+    let value = +aluno.metas[key];
     mean += value
   }
   return mean/length
