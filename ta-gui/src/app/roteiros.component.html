@@ -1,0 +1,30 @@
+<html (mousemove)="onMove()">
+
+<table>
+  <tr>
+    <td><label>Nome </label></td>
+    <td><input [(ngModel)]="roteiro.nome" name="namebox"></td>
+    <td name="msgroteiroexistente" *ngIf="roteiroduplicado">
+      Já existe um roteiro com este nome
+    </td>
+    <td><button (click)="criarRoteiro(roteiro)">Adicionar</button></td>
+  </tr>
+  <tr>
+    <td><label>Data Limite</label></td>
+    <td><input type="date" [(ngModel)]="roteiro.dataDeEntrega" ></td>
+  </tr>
+</table>
+
+<table>
+  <tr *ngIf="roteiros.length > 0">
+    <th>Nome</th>
+    <th>CPF</th>
+    <th>e-mail</th>
+  </tr>
+  <tr *ngFor="let r of roteiros" name="alunolist">
+    <td name="nomelist">{{r.nome}}</td>
+    <td name="datelist">{{r.dataDeEntrega}}</td>
+  </tr>
+</table>
+
+</html>

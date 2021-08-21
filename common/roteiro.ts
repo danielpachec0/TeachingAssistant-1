@@ -1,24 +1,27 @@
-export class Roteiro {
+
+
+export class Roteiro{
     nome: string;
-    dataDeEntrega: "";
-  
+    dataDeEntrega: string;
+
     constructor() {
-      this.clean();
+        this.clean();
     }
-  
-    clean(): void {
-      this.nome = "";
-      this.dataDeEntrega = "";
+
+    clean(): void{
+        this.nome = "";
+        this.dataDeEntrega = "";
     }
-  
-    clone(): Roteiro {
-      var roteiro: Roteiro = new Roteiro();
-      roteiro.copyFrom(this);
-      return roteiro;
+
+    clone(): Roteiro{
+        var roteiro: Roteiro = new Roteiro();
+        roteiro.copyFrom(this);
+        return roteiro;
     }
-  
+
     copyFrom(from: Roteiro): void {
-      this.nome = from.nome;
-      this.dataDeEntrega = from.dataDeEntrega;
-    }  
+        this.nome = from.nome;
+        this.dataDeEntrega = from.dataDeEntrega;
+    }
 }
+
