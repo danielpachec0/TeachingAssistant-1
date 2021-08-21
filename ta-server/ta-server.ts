@@ -1,13 +1,17 @@
 import express = require('express');
 import bodyParser = require("body-parser");
 import nodemailer = require("nodemailer");
+const cron = require("node-cron");
 
 import {Aluno} from '../common/aluno';
+import {Roteiro} from '../common/roteiro';
 import {CadastroDeAlunos} from './cadastrodealunos';
+import { CadastroDeRoteiros } from './cadastroDeRoteiros';
 
 var taserver = express();
 
-var cadastro: CadastroDeAlunos = new CadastroDeAlunos();
+var cadastroAlunos: CadastroDeAlunos = new CadastroDeAlunos();
+var cadastroRoteiros: CadastroDeRoteiros = new CadastroDeRoteiros();
 
 var allowCrossDomain = function(req: any, res: any, next: any) {
     res.header('Access-Control-Allow-Origin', "*");
@@ -19,13 +23,37 @@ taserver.use(allowCrossDomain);
 
 taserver.use(bodyParser.json());
 
+taserver.get('/roteiro', function (req: express.Request, res: express.Response) {
+  res.send(JSON.stringify(cadastroRoteiros.getRoteiros()));
+})
+
+taserver.post('/roteiro', function (req: express.Request, res: express.Response) {
+  var roteiro: Roteiro = <Roteiro> req.body; //verificar se é mesmo Aluno!
+  roteiro = cadastroRoteiros.cadastrar(roteiro);
+  if (roteiro) {
+    res.send({"success": "O roteiro foi cadastrado com sucesso"});
+  } else {
+    res.send({"failure": "O roteiro não pode ser cadastrado"});
+  }
+})
+
+taserver.put('/roteiro', function (req: express.Request, res: express.Response) {
+  var roteiro: Roteiro = <Roteiro> req.body;
+  roteiro = cadastroRoteiros.atualizar(roteiro);
+  if (roteiro) {
+    res.send({"success": "O aluno foi atualizado com sucesso"});
+  } else {
+    res.send({"failure": "O aluno não pode ser atualizado"});
+  }
+})
+
 taserver.get('/alunos', function (req: express.Request, res: express.Response) {
-  res.send(JSON.stringify(cadastro.getAlunos()));
+  res.send(JSON.stringify(cadastroAlunos.getAlunos()));
 })
 
 taserver.post('/aluno', function (req: express.Request, res: express.Response) {
   var aluno: Aluno = <Aluno> req.body; //verificar se é mesmo Aluno!
-  aluno = cadastro.cadastrar(aluno);
+  aluno = cadastroAlunos.cadastrar(aluno);
   if (aluno) {
     res.send({"success": "O aluno foi cadastrado com sucesso"});
   } else {
@@ -35,7 +63,7 @@ taserver.post('/aluno', function (req: express.Request, res: express.Response) {
 
 taserver.put('/aluno', function (req: express.Request, res: express.Response) {
   var aluno: Aluno = <Aluno> req.body;
-  aluno = cadastro.atualizar(aluno);
+  aluno = cadastroAlunos.atualizar(aluno);
   if (aluno) {
     res.send({"success": "O aluno foi atualizado com sucesso"});
   } else {
@@ -48,7 +76,7 @@ var server = taserver.listen(3000, function () {
 })
 
 taserver.post('/mailTest', function (req: express.Request, res: express.Response) {
-  sendMailRoteiro(cadastro.alunos)
+  sendMailRoteiro(cadastroAlunos.alunos)
   res.send("mamaki");
 })
 
@@ -74,6 +102,12 @@ async function sendMailRoteiro(alunos: Aluno[]): Promise<void> {
     let info = await transporter.sendMail(mailOptions);
   }
 }
+
+function checkDates(){
+
+}
+
+cron.schedule("1 0 0 * * *", () => sendMailRoteiro(cadastroAlunos.alunos));
 
 function closeServer(): void {
   server.close();
