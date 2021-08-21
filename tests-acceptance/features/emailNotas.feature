@@ -36,3 +36,18 @@ Scenario: Aluno precisa fazer prova final, serviço
     When: Eu recebo o pedido de enviar resultado associado ao aluno "Henrique"
     Then: O sistema envia um email para o endereço associado a "Henrique", com a média "4" e
                uma mensagem de reprovação "Infelizmente sua média ficou abaixo de 5, você está na final. Boa sorte."
+
+Scenario: Envio de média final para um email invalido
+	Given Eu estou na pagina de estudantes
+	And Eu posso ver o aluno "Charles" com email "batata.com"
+	When Eu tento enviar o email de resultado para "Charles" com email "batata.com"
+	Then Eu recebo uma mensagem de erro
+	And Eu posso ver o aluno "Charles" com email "batata.com"
+
+Scenario: Envio de média final para um email invalido, serviço
+	Given O sistema possui o aluno "Charles" com email "batata.com"
+	When O email de resultado é enviado para "Charles" com email "batata.com"
+	Then O sistema recebe uma mensagem de erro
+	And O sistema possui o aluno "Charles" com email "batata.com"
+
+
