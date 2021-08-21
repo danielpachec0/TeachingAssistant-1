@@ -33,7 +33,10 @@ async function assertElementsWithSameCPF(n,cpf) {
     await assertTamanhoEqual(samecpfs,n); 
 }
 
-defineSupportCode(function ({ Given, When, Then }) {
+defineSupportCode(function ({ Given
+                                , When
+                                , Then
+}) {
     Given(/^I am at the students page$/, async () => {
         await browser.get("http://localhost:4200/");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
@@ -44,11 +47,11 @@ defineSupportCode(function ({ Given, When, Then }) {
         await assertElementsWithSameCPF(0,cpf);
     });
 
-    When(/^I try to register the student "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
+    When(/^I try to register the student "([^"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
         await criarAluno(name,cpf);
     });
 
-    Then(/^I can see "([^\"]*)" with CPF "(\d*)" in the students list$/, async (name, cpf) => {
+    Then(/^I can see "([^"]*)" with CPF "(\d*)" in the students list$/, async (name, cpf) => {
         await assertElementsWithSameCPFAndName(1,cpf,name);
     });
 

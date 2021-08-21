@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgModule } from '@angular/core';
 
 import { Aluno } from '../../../common/aluno';
 import { AlunoService } from './aluno.service';
@@ -14,9 +13,19 @@ import { AlunoService } from './aluno.service';
 
     alunos: Aluno[];
 
+    enviarRelatorio(aluno: Aluno): void {
+      this.alunoService.enviarRelatorio(aluno).subscribe(
+        (a) => {if (a == null) {alert('Unexpected fatal error trying to send report! ' +
+          'Please contact the systems administrators');
+        }}
+      );
+    }
+
     atualizarAluno(aluno: Aluno): void {
       this.alunoService.atualizar(aluno).subscribe(
-         (a) => { if (a == null) alert("Unexpected fatal error trying to update student information! Please contact the systems administratos."); },
+         (a) => { if (a == null) { alert('Unexpected fatal error trying to update student information! ' +
+           'Please contact the systems administratos.');
+ } },
          (msg) => { alert(msg.message); }
       );
     }
