@@ -75,12 +75,7 @@ var server = taserver.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
 
-taserver.post('/mailTest', function (req: express.Request, res: express.Response) {
-  sendMailRoteiro(cadastroAlunos.alunos)
-  res.send("mamaki");
-})
-
-async function sendMailRoteiro(alunos: Aluno[]): Promise<void> {
+async function sendMailRoteiro(alunos: Aluno[], nomeRoteiro: string, data: string): Promise<void> {
 
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -96,18 +91,33 @@ async function sendMailRoteiro(alunos: Aluno[]): Promise<void> {
       from: `ta.ess.2020.2@gmail.com`,
       to: aluno.email,
       subject: "subject",
-      text: aluno.nome,
+      text: `Atenção ${aluno.nome}! O roteiro  ${nomeRoteiro} deve ser entregue até o fim do dia:(${data})`,
       //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
     };
     let info = await transporter.sendMail(mailOptions);
   }
 }
 
-function checkDates(){
-
+function checkDate(dataRoteiro: string): boolean{
+  let dataRoteiroDate: number = Date.parse(dataRoteiro);
+  let dataAtual: number =  Date.now();
+  if(dataRoteiroDate - dataAtual <= (86400000) && dataRoteiroDate - dataAtual > 0){
+    console.log(true);
+    return true;
+  }
+  console.log(false);
+  return false;
 }
 
-cron.schedule("1 0 0 * * *", () => sendMailRoteiro(cadastroAlunos.alunos));
+cron.schedule("0 0 * * *", () => {
+  console.log("teste");
+  for (let i = 0; i < cadastroRoteiros.roteiros.length; i++) {
+    const element = cadastroRoteiros.roteiros[i];
+    if(checkDate(element.dataDeEntrega)){
+      sendMailRoteiro(cadastroAlunos.alunos, element.nome, element.dataDeEntrega);
+    }
+  }
+});
 
 function closeServer(): void {
   server.close();
