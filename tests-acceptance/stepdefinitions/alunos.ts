@@ -1,5 +1,6 @@
 import { defineSupportCode } from 'cucumber';
 import { browser, $, element, ElementArrayFinder, by } from 'protractor';
+
 let chai = require('chai').use(require('chai-as-promised'));
 let expect = chai.expect;
 import request = require("request-promise");
@@ -8,6 +9,7 @@ var base_url = "http://localhost:3000/";
 
 let sameCPF = ((elem, cpf) => elem.element(by.name('cpflist')).getText().then(text => text === cpf));
 let sameName = ((elem, name) => elem.element(by.name('nomelist')).getText().then(text => text === name));
+let sameEmail = ((elem, email) => elem.element(by.name('emaillist')).getText().then(text => text === email));
 
 let pAND = ((p,q) => p.then(a => q.then(b => a && b)))
 
@@ -17,22 +19,22 @@ async function criarAluno(name, cpf, email) {
 	await $("input[name='emailbox']").sendKeys(<string> email);
     await element(by.buttonText('Adicionar')).click();
 }
-async function updateAluno(name, cpf, notaRequisito, notaConfig) {
-	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
-    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
-    await $("samecpfsandname[0][name='requisitosBox']").sendKeys(<string> notaRequisito);
-	await $("samecpfsandname[0][name='gerDeConfiguracaoBox']").sendKeys(<string> notaConfig);
-}
-
-async function assertNotas(name, cpf, notaRequisito, notaConfig) {
-	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
-    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
-    await $("samecpfsandname[0][name='requisitosBox']").gettext() == notaRequisito;
-	await $("samecpfsandname[0][name='gerDeConfiguracaoBox']").gettext() == notaConfig;
-}
 
 async function assertTamanhoEqual(set,n) {
     await set.then(elems => expect(Promise.resolve(elems.length)).to.eventually.equal(n));
+}
+
+async function assertElementsWithSameCPFAndNameAndEmail(n,cpf,name,email) { 
+    var allalunos : ElementArrayFinder = element.all(by.name('alunolist'));
+    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
+	var samecpfsandnameandemail = samecpfsandname.filter(elem => sameEmail(elem,email));
+    await assertTamanhoEqual(samecpfsandnameandemail,n);
+}
+async function assertElementsWithSameCPFAndNameAndEmailMETAS(n,cpf,name,email) { 
+    var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
+	var samecpfsandnameandemail = samecpfsandname.filter(elem => sameEmail(elem,email));
+    await assertTamanhoEqual(samecpfsandnameandemail,n);
 }
 
 async function assertElementsWithSameCPFAndName(n,cpf,name) { 
@@ -46,47 +48,80 @@ async function assertElementsWithSameCPF(n,cpf) {
     var samecpfs = allalunos.filter(elem => sameCPF(elem,cpf));
     await assertTamanhoEqual(samecpfs,n); 
 }
+async function assertElementsWithSameCPFMETAS(n,cpf) {
+    var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var samecpfs = allalunos.filter(elem => sameCPF(elem,cpf));
+    await assertTamanhoEqual(samecpfs,n); 
+}
 
-defineSupportCode(function ({ Given
-                                , When
-                                , Then
-}) {
-	Given(/^eu estou na pagina do estudante$/, async () => {
-        await browser.get("http://localhost:4200");
+async function updateAluno(cpf, notaRequisito, notaConfig) {
+	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var aluno = allalunos.filter(elem => sameCPF(elem,cpf)).get(0);
+	var req = aluno.all(by.name('requisitosBox'));
+	var conf = aluno.all(by.name('gerDeConfiguracaoBox'));
+	req.clear();
+	conf.clear();
+	await req.sendKeys(<string> notaRequisito);
+	await conf.sendKeys(<string> notaConfig);
+	await req.sendKeys(<string> "");
+}
+
+async function assertNotas(cpf, notaRequisito, notaConfig) {
+	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var aluno = allalunos.filter(elem => sameCPF(elem,cpf)).get(0);
+	var req = aluno.all(by.name('requisitosBox'));
+	var conf = aluno.all(by.name('gerDeConfiguracaoBox'));
+    await req.getText() == notaRequisito;
+	await conf.getText() == notaConfig;
+}
+async function assertEnviarEmail(email) {
+	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
+    await aluno.all(by.buttonText('Enviar')).click();
+}
+defineSupportCode(function ({ Given, When, Then }) {
+
+    Given(/^eu estou na pagina do aluno$/, async () => {
+        await browser.get("http://localhost:4200/");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='alunos']").click();
     })
-	
-	Given(/^estou na página de enviar notas para os alunos$/, async () => {
-        await browser.get("http://localhost:4200");
+	Given(/^eu estou na pagina de metas$/, async () => {
+        await browser.get("http://localhost:4200/");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='metas']").click();
     })
-	//eu associo a "Charles Gabriel" com CPF "683" as notas "8" e "7" respectivamente
-	When(/^eu associo a "([^"]*)" com CPF "(\d*)" as notas "(\d*)" e "(\d*)" respectivamente$/, async (name, cpf,notaReq,notaConf) => {
-        await assertElementsWithSameCPFAndName(1,cpf,name);
-		await updateAluno(name,cpf,notaReq,notaConf);
+
+    Given(/^eu nao posso ver um aluno com CPF "(\d*)" na lista de estudantes$/, async (cpf) => {
+        await assertElementsWithSameCPF(0,cpf);
     });
 
-	//eu posso ver que as notas de "Charles Gabriel" com CPF "683" são "8" e "7" respectivamente
-    Then(/^eu posso ver que as notas de "([^"]*)" with CPF "(\d*)" são "(\d*)" e "(\d*)" respectivamente$/, async (name, cpf,notaReq,notaConf) => {
-        await assertElementsWithSameCPFAndName(1,cpf,name);
-		await assertNotas(name,cpf,notaReq,notaConf)
-    });
-
-    Given(/^eu consigo ver o estudante "([^"]*)" com CPF "(\d*)" e email "([^"]*)" na lista de estudante$/, async (name,cpf,email) => {
+    When(/^eu tento cadastrar o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)"$/, async (name, cpf,email) => {
         await criarAluno(name,cpf,email);
-        await assertElementsWithSameCPF(1,cpf); 
     });
 
-    Then(/^I cannot see "([^\"]*)" with CPF "(\d*)" in the students list$/, async (name, cpf) => {
-        await assertElementsWithSameCPFAndName(0,cpf,name);
+    Then(/^eu posso ver o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" na lista de estudantes$/, async (name, cpf,email) => {
+        await assertElementsWithSameCPFAndNameAndEmail(1,cpf,name,email);
+    });
+	//eu posso ver o aluno "Charles" com CPF "683" e email "cgcc@cin.ufpe.br" na lista de metas
+	Given(/^eu posso ver o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" na lista de metas$/, async (name, cpf, email) => {
+        await assertElementsWithSameCPFAndNameAndEmailMETAS(1,cpf,name,email);
+    })
+	//eu posso ver o aluno com CPF "683" com notas "8" e "7" respectivamente
+	Then(/^eu posso ver o aluno com CPF "(\d*)" com notas "(\d*)" e "(\d*)" respectivamente$/, async (cpf, notaReq,notaConf) => {
+        await assertElementsWithSameCPFMETAS(1,cpf);
+		await assertNotas(cpf,notaReq,notaConf);
     });
 
-    Then(/^I can see an error message$/, async () => {
-        var allmsgs : ElementArrayFinder = element.all(by.name('msgcpfexistente'));
-        await assertTamanhoEqual(allmsgs,1);
+	Then(/^eu envio um email de resultado para "([^\"]*)"$/, async (email) => {
+		await assertEnviarEmail(email);
     });
+
+	//eu atribuo ao aluno "Charles" com CPF "683" as notas "8" e "7" respectivamente
+	When(/^eu atribuo ao aluno com CPF "(\d*)" as notas "(\d*)" e "(\d*)" respectivamente$/, async (cpf,notaReq,notaConf) => {
+        await updateAluno(cpf,notaReq,notaConf);
+    });
+
 
     Given(/^the system has no student with CPF "(\d*)"$/, async (cpf) => {
        await request.get(base_url + "alunos")
