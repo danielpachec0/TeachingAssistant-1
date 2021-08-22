@@ -1,4 +1,4 @@
-<table>
+<table (mousemove)="onMove()">
  <tr>
     <th>Nome</th>
     <th>CPF</th>
@@ -15,5 +15,6 @@
     <td class="meta"><input [(ngModel)]="a.metas['gerDeConfiguracao']" (change)="atualizarAluno(a)"></td>
     <td><button (click)="enviarRelatorio(a)" [disabled]="a.metas['requisitos'] === '' ||
      a.metas['gerDeConfiguracao'] === ''">Enviar</button></td>
+    <td>{{this.message}}</td>
  </tr>
  </table>

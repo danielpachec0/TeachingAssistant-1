@@ -12,11 +12,15 @@ import { AlunoService } from './aluno.service';
     constructor(private alunoService: AlunoService) {}
 
     alunos: Aluno[];
+    private message = '';
+    private showmessage = false;
 
     enviarRelatorio(aluno: Aluno): void {
       this.alunoService.enviarRelatorio(aluno).subscribe(
-        (a) => {if (a == null) {alert('Unexpected fatal error trying to send report! ' +
-          'Please contact the systems administrators');
+        (a) => {if (a == null) {
+          this.message = 'Relatório enviado com sucesso!';
+        } else {
+          this.message = 'Erro ao enviar o relatório!';
         }}
       );
     }
@@ -28,6 +32,14 @@ import { AlunoService } from './aluno.service';
  } },
          (msg) => { alert(msg.message); }
       );
+    }
+
+    onMove(): void {
+      this.showmessage = false;
+    }
+
+    showMessage(): void {
+      this.showmessage = true;
     }
 
     ngOnInit(): void {
