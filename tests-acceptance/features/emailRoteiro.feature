@@ -43,7 +43,7 @@ Scenario: Prazo de entrega do roteiro se encerrou, serviços
     And: O email informa sobre o prazo perdido avisando que já é dia "24/08"
 
 	Scenario: Envio de nota de roteiro para um email invalido
-	Given Eu estou na pagina de estudantes
+	Given Estou na página de enviar notas para os alunos
 	And Eu posso ver o aluno "Charles" com email "batata.com"
 	When Eu tento enviar o email do resultado do roteiro "Requisitos" para "Charles" com email "batata.com"
 	Then Eu recebo uma mensagem de erro

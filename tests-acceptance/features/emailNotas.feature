@@ -1,8 +1,19 @@
 Feature: Como um professor
     Desejo fazer envio de email(s) com o resultado na disciplina (aprovado, reprovado, final, etc.)
 
+Scenario: Registrando aluno com CPF novo
+	Given eu estou na pagina do estudante
+	Given nao vejo o CPF "683" na lista de estudantes
+	When tento cadastrar o aluno "Charles" com CPF "683"
+	Then eu posso ver "Charles" com "683" na lista de estudantes
+
+Scenario: Registrando aluno com CPF novo, serviço
+	Given o sistema nao tem estudante com CPF "685"
+	When eu registro o estudante "Paulo" com CPF "685"
+	Then o sistema agora armazena "Paulo" with CPF "685"
+
 Scenario: Aluno foi aprovado por média
-    Given: Estou na página de enviar notas para os alunos
+    Given: estou na página de enviar notas para os alunos
     When: Eu clico no botão de "Enviar Resultado" associado ao aluno "Charles Gabriel"
     Then: O sistema envia um email para o endereço associado a "Charles Gabriel", com a média "9" e
                uma mensagem de aprovação "Parabéns, você foi aprovado com média 9"
@@ -38,7 +49,7 @@ Scenario: Aluno precisa fazer prova final, serviço
                uma mensagem de reprovação "Infelizmente sua média ficou abaixo de 5, você está na final. Boa sorte."
 
 Scenario: Envio de média final para um email invalido
-	Given Eu estou na pagina de estudantes
+	Given Estou na página de enviar notas para os alunos
 	And Eu posso ver o aluno "Charles" com email "batata.com"
 	When Eu tento enviar o email de resultado para "Charles" com email "batata.com"
 	Then Eu recebo uma mensagem de erro

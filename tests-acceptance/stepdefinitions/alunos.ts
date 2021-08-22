@@ -16,6 +16,12 @@ async function criarAluno(name, cpf) {
     await $("input[name='cpfbox']").sendKeys(<string> cpf);
     await element(by.buttonText('Adicionar')).click();
 }
+async function updateAluno(name, cpf, notaRequisito, notaConfig) {
+	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
+    await $("samecpfsandname[0][name='requisitosBox']").sendKeys(<string> notaRequisito);
+	await $("samecpfsandname[0][name='gerDeConfiguracaoBox']").sendKeys(<string> notaConfig);
+}
 
 async function assertTamanhoEqual(set,n) {
     await set.then(elems => expect(Promise.resolve(elems.length)).to.eventually.equal(n));
@@ -37,20 +43,26 @@ defineSupportCode(function ({ Given
                                 , When
                                 , Then
 }) {
-    Given(/^I am at the students page$/, async () => {
-        await browser.get("http://localhost:4200/");
+	Given(/^eu estou na pagina do estudante$/, async () => {
+        await browser.get("http://localhost:4200");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='alunos']").click();
     })
-
-    Given(/^I cannot see a student with CPF "(\d*)" in the students list$/, async (cpf) => {
+	
+	Given(/^estou na página de enviar notas para os alunos$/, async () => {
+        await browser.get("http://localhost:4200");
+        await expect(browser.getTitle()).to.eventually.equal('TaGui');
+        await $("a[name='metas']").click();
+    })
+	//nao vejo o CPF "683" na lista de estudantes
+    Given(/^nao vejo o CPF "(\d*)" na lista de estudantes$/, async (cpf) => {
         await assertElementsWithSameCPF(0,cpf);
     });
-
-    When(/^I try to register the student "([^"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
+	//tento cadastrar o aluno "Charles" com CPF "683"
+    When(/^tento cadastrar o aluno "([^"]*)" com CPF "(\d*)"$/, async (name, cpf) => {
         await criarAluno(name,cpf);
     });
-
+	//eu posso ver "Charles" com "683" na lista de estudantes
     Then(/^I can see "([^"]*)" with CPF "(\d*)" in the students list$/, async (name, cpf) => {
         await assertElementsWithSameCPFAndName(1,cpf,name);
     });
