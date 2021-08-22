@@ -1,3 +1,4 @@
+import { assert } from 'console';
 import { defineSupportCode } from 'cucumber';
 import { browser, $, element, ElementArrayFinder, by } from 'protractor';
 
@@ -59,11 +60,10 @@ async function updateAluno(cpf, notaRequisito, notaConfig) {
     var aluno = allalunos.filter(elem => sameCPF(elem,cpf)).get(0);
 	var req = aluno.all(by.name('requisitosBox'));
 	var conf = aluno.all(by.name('gerDeConfiguracaoBox'));
-	req.clear();
-	conf.clear();
+	await req.clear();
+	await conf.clear();
 	await req.sendKeys(<string> notaRequisito);
 	await conf.sendKeys(<string> notaConfig);
-	await req.sendKeys(<string> "");
 }
 
 async function assertNotas(cpf, notaRequisito, notaConfig) {
@@ -77,7 +77,17 @@ async function assertNotas(cpf, notaRequisito, notaConfig) {
 async function assertEnviarEmail(email) {
 	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
     var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
+	var button = aluno.all(by.buttonText('Enviar'));
+	await expect(button.getAttribute('disabled')).to.eventually.equal(false);
     await aluno.all(by.buttonText('Enviar')).click();
+}
+async function assertEnviarEmailBloqueado(email) {
+	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
+	var button = aluno.all(by.buttonText('Enviar')).get(0);
+	var disabledbutton = button.getAttribute('disabled');
+	//console.log(disabledbutton);
+	await expect(button.isEnabled()).to.eventually.equal(true);
 }
 defineSupportCode(function ({ Given, When, Then }) {
 
@@ -114,7 +124,11 @@ defineSupportCode(function ({ Given, When, Then }) {
     });
 
 	Then(/^eu envio um email de resultado para "([^\"]*)"$/, async (email) => {
-		await assertEnviarEmail(email);
+		await assertEnviarEmailBloqueado(email);
+    });
+
+	Then(/^eu não consigo enviar um email de resultado para "([^\"]*)"$/, async (email) => {
+		await assertEnviarEmailBloqueado(email);
     });
 
 	//eu atribuo ao aluno "Charles" com CPF "683" as notas "8" e "7" respectivamente

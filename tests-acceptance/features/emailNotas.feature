@@ -14,3 +14,10 @@ Scenario: Aluno com notas preenchidas
 	Then eu posso ver o aluno com CPF "683" com notas "8" e "7" respectivamente
 	And eu envio um email de resultado para "gasm@cin.ufpe.br"
 
+Scenario: Aluno com notas parcialmente preenchidas
+	Given eu estou na pagina de metas
+	And eu posso ver o aluno "Charles" com CPF "683" e email "gasm@cin.ufpe.br" na lista de metas
+	When eu atribuo ao aluno com CPF "683" as notas "6" e "" respectivamente
+	Then eu posso ver o aluno com CPF "683" com notas "6" e "" respectivamente
+	And eu não consigo enviar um email de resultado para "gasm@cin.ufpe.br"
+
