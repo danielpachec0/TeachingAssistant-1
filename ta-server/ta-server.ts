@@ -107,6 +107,16 @@ function checkDate(dataRoteiro: string): boolean{
   return false;
 }
 
+cron.schedule("0 0 * * *", () => {
+  console.log("teste");
+  for (let i = 0; i < cadastroRoteiros.roteiros.length; i++) {
+    const element = cadastroRoteiros.roteiros[i];
+    if(checkDate(element.dataDeEntrega)){
+      sendMailRoteiro(cadastroAlunos.alunos, element.nome, element.dataDeEntrega);
+    }
+  }
+});
+
 function closeServer(): void {
   server.close();
 }
