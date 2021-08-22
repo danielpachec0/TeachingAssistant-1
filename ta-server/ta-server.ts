@@ -102,22 +102,10 @@ function checkDate(dataRoteiro: string): boolean{
   let dataRoteiroDate: number = Date.parse(dataRoteiro);
   let dataAtual: number =  Date.now();
   if(dataRoteiroDate - dataAtual <= (86400000) && dataRoteiroDate - dataAtual > 0){
-    console.log(true);
     return true;
   }
-  console.log(false);
   return false;
 }
-
-cron.schedule("0 0 * * *", () => {
-  console.log("teste");
-  for (let i = 0; i < cadastroRoteiros.roteiros.length; i++) {
-    const element = cadastroRoteiros.roteiros[i];
-    if(checkDate(element.dataDeEntrega)){
-      sendMailRoteiro(cadastroAlunos.alunos, element.nome, element.dataDeEntrega);
-    }
-  }
-});
 
 function closeServer(): void {
   server.close();
