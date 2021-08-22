@@ -10,6 +10,7 @@ import { MetasComponent } from './metas.component';
 import { AlunosComponent } from './alunos.component';
 import { AlunoService } from './aluno.service';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +21,7 @@ import { AlunoService } from './aluno.service';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule, 
+    HttpClientModule,
     RouterModule.forRoot([
       {
         path: 'metas',

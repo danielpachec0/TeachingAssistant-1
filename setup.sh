@@ -4,3 +4,4 @@
 (cd common; npm install)
 (cd ta-gui; npm install)
 (cd ta-server; npm install)
+(cd tests-acceptance; npm install)
