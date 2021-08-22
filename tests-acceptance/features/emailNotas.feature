@@ -11,6 +11,39 @@ Scenario: Registrando aluno com CPF novo, serviço
 	Given o sistema nao tem estudante com CPF "685"
 	When eu registro o estudante "Paulo" com CPF "685"
 	Then o sistema agora armazena "Paulo" with CPF "685"
+Scenario: Cadastrando notas de aluno
+    Given: Estou na página de enviar notas para os alunos
+    When: Eu clico no campo de Requisitos associado ao aluno "Charles Gabriel", preenchendo com "8"
+    And: Clico no campo de Requisitos associado ao aluno "John", preenchendo com "1"
+    And: Clico no campo de Requisitos associado ao aluno "Henrique", preenchendo com "3"
+    And: Clico no campo de Gerência de Configuração associado ao aluno "Charles Gabriel", preenchendo com "10"
+    And: Clico no campo de Gerência de Configuração associado ao aluno "Jonh", preenchendo com "3"
+    And: Clico no campo de Gerência de Configuração associado ao aluno "Henrique", preenchendo com "5"
+    Then: O sistema associa as notas aos alunos respectivamente
+
+Scenario: Cadastrando notas de aluno, sistema
+    Given: Estou na página de enviar notas para os alunos
+    When: Eu recebo do campo de Requisitos associado ao aluno "Charles Gabriel", o valor "8"
+    And: Eu recebo do campo de Requisitos associado ao aluno "John", po valor "1"
+    And: Eu recebo do campo de Requisitos associado ao aluno "Henrique", o valor "3"
+    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Charles Gabriel", o valor "10"
+    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Jonh", o valor "3"
+    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Henrique", o valor "5"
+    Then: Associa-se as notas aos alunos respectivamente por meio de um json
+
+Scenario: Cadastrando notas inadequadas para alunos
+    Given: Estou na página de enviar notas para os alunos
+    When: Eu clico no campo de Requisitos associado ao aluno "Mr T", preenchendo com "11"
+    And: Clico no campo de Gerência de Configuração associado ao aluno "Mr T", preenchendo com "-1"
+    Then: O sistema associa a nota "10" ao campo de Requisitos do aluno "Mr T"
+    And: O sistema associa a nota "0" ao campo de Gerência de Configuração do aluno "Mr T"
+
+Scenario: Cadastrando notas inadequadas para alunos
+    Given: Estou na página de enviar notas para os alunos
+    When: Eu recebo do campo de Requisitos associado ao aluno "Mr T", o valor "11"
+    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Mr T", o valor "-1"
+    Then: Associa-se a nota "10" ao campo de Requisitos do aluno "Mr T"
+    And: Associa-se a nota "0" ao campo de Gerência de Configuração do aluno "Mr T"
 
 Scenario: Aluno foi aprovado por média
     Given: estou na página de enviar notas para os alunos
@@ -60,5 +93,3 @@ Scenario: Envio de média final para um email invalido, serviço
 	When O email de resultado é enviado para "Charles" com email "batata.com"
 	Then O sistema recebe uma mensagem de erro
 	And O sistema possui o aluno "Charles" com email "batata.com"
-
-
