@@ -11,9 +11,10 @@ let sameName = ((elem, name) => elem.element(by.name('nomelist')).getText().then
 
 let pAND = ((p,q) => p.then(a => q.then(b => a && b)))
 
-async function criarAluno(name, cpf) {
+async function criarAluno(name, cpf, email) {
     await $("input[name='namebox']").sendKeys(<string> name);
     await $("input[name='cpfbox']").sendKeys(<string> cpf);
+	await $("input[name='emailbox']").sendKeys(<string> email);
     await element(by.buttonText('Adicionar')).click();
 }
 async function updateAluno(name, cpf, notaRequisito, notaConfig) {
@@ -21,6 +22,13 @@ async function updateAluno(name, cpf, notaRequisito, notaConfig) {
     var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
     await $("samecpfsandname[0][name='requisitosBox']").sendKeys(<string> notaRequisito);
 	await $("samecpfsandname[0][name='gerDeConfiguracaoBox']").sendKeys(<string> notaConfig);
+}
+
+async function assertNotas(name, cpf, notaRequisito, notaConfig) {
+	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
+    await $("samecpfsandname[0][name='requisitosBox']").gettext() == notaRequisito;
+	await $("samecpfsandname[0][name='gerDeConfiguracaoBox']").gettext() == notaConfig;
 }
 
 async function assertTamanhoEqual(set,n) {
@@ -54,21 +62,20 @@ defineSupportCode(function ({ Given
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='metas']").click();
     })
-	//nao vejo o CPF "683" na lista de estudantes
-    Given(/^nao vejo o CPF "(\d*)" na lista de estudantes$/, async (cpf) => {
-        await assertElementsWithSameCPF(0,cpf);
-    });
-	//tento cadastrar o aluno "Charles" com CPF "683"
-    When(/^tento cadastrar o aluno "([^"]*)" com CPF "(\d*)"$/, async (name, cpf) => {
-        await criarAluno(name,cpf);
-    });
-	//eu posso ver "Charles" com "683" na lista de estudantes
-    Then(/^I can see "([^"]*)" with CPF "(\d*)" in the students list$/, async (name, cpf) => {
+	//eu associo a "Charles Gabriel" com CPF "683" as notas "8" e "7" respectivamente
+	When(/^eu associo a "([^"]*)" com CPF "(\d*)" as notas "(\d*)" e "(\d*)" respectivamente$/, async (name, cpf,notaReq,notaConf) => {
         await assertElementsWithSameCPFAndName(1,cpf,name);
+		await updateAluno(name,cpf,notaReq,notaConf);
     });
 
-    Given(/^I can see a student with CPF "(\d*)" in the students list$/, async (cpf) => {
-        await criarAluno("Clarissa",cpf);
+	//eu posso ver que as notas de "Charles Gabriel" com CPF "683" são "8" e "7" respectivamente
+    Then(/^eu posso ver que as notas de "([^"]*)" with CPF "(\d*)" são "(\d*)" e "(\d*)" respectivamente$/, async (name, cpf,notaReq,notaConf) => {
+        await assertElementsWithSameCPFAndName(1,cpf,name);
+		await assertNotas(name,cpf,notaReq,notaConf)
+    });
+
+    Given(/^eu consigo ver o estudante "([^"]*)" com CPF "(\d*)" e email "([^"]*)" na lista de estudante$/, async (name,cpf,email) => {
+        await criarAluno(name,cpf,email);
         await assertElementsWithSameCPF(1,cpf); 
     });
 

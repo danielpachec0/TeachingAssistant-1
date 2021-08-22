@@ -1,42 +1,28 @@
 Feature: Como um professor
     Desejo fazer envio de email(s) com o resultado na disciplina (aprovado, reprovado, final, etc.)
 
-Scenario: Registrando aluno com CPF novo
-	Given eu estou na pagina do estudante
-	Given nao vejo o CPF "683" na lista de estudantes
-	When tento cadastrar o aluno "Charles" com CPF "683"
-	Then eu posso ver "Charles" com "683" na lista de estudantes
-
-Scenario: Registrando aluno com CPF novo, serviço
-	Given o sistema nao tem estudante com CPF "685"
-	When eu registro o estudante "Paulo" com CPF "685"
-	Then o sistema agora armazena "Paulo" with CPF "685"
 Scenario: Cadastrando notas de aluno
-    Given: Estou na página de enviar notas para os alunos
-    When: Eu clico no campo de Requisitos associado ao aluno "Charles Gabriel", preenchendo com "8"
-    And: Clico no campo de Requisitos associado ao aluno "John", preenchendo com "1"
-    And: Clico no campo de Requisitos associado ao aluno "Henrique", preenchendo com "3"
-    And: Clico no campo de Gerência de Configuração associado ao aluno "Charles Gabriel", preenchendo com "10"
-    And: Clico no campo de Gerência de Configuração associado ao aluno "Jonh", preenchendo com "3"
-    And: Clico no campo de Gerência de Configuração associado ao aluno "Henrique", preenchendo com "5"
-    Then: O sistema associa as notas aos alunos respectivamente
-
-Scenario: Cadastrando notas de aluno, sistema
-    Given: Estou na página de enviar notas para os alunos
-    When: Eu recebo do campo de Requisitos associado ao aluno "Charles Gabriel", o valor "8"
-    And: Eu recebo do campo de Requisitos associado ao aluno "John", po valor "1"
-    And: Eu recebo do campo de Requisitos associado ao aluno "Henrique", o valor "3"
-    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Charles Gabriel", o valor "10"
-    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Jonh", o valor "3"
-    And: Eu recebo do campo de Gerência de Configuração associado ao aluno "Henrique", o valor "5"
-    Then: Associa-se as notas aos alunos respectivamente por meio de um json
+	Given eu posso ver o aluno "Charles Gabriel" com CPF "683" e email "cgcc@cin.ufpe.br" na lista de estudantes
+    And eu estou na página de enviar notas para os alunos
+    When eu associo a "Charles Gabriel" com CPF "683" as notas "8" e "7" respectivamente
+    Then eu posso ver que as notas de "Charles Gabriel" com CPF "683" são "8" e "7" respectivamente
+	
+Scenario: Cadastrando notas de aluno, serviço
+    Given Estou na página de enviar notas para os alunos
+    When Eu recebo do campo de Requisitos associado ao aluno "Charles Gabriel", o valor "8"
+    And Eu recebo do campo de Requisitos associado ao aluno "John", po valor "1"
+    And Eu recebo do campo de Requisitos associado ao aluno "Henrique", o valor "3"
+    And Eu recebo do campo de Gerência de Configuração associado ao aluno "Charles Gabriel", o valor "10"
+    And Eu recebo do campo de Gerência de Configuração associado ao aluno "Jonh", o valor "3"
+    And Eu recebo do campo de Gerência de Configuração associado ao aluno "Henrique", o valor "5"
+    Then Associa-se as notas aos alunos respectivamente por meio de um json
 
 Scenario: Cadastrando notas inadequadas para alunos
-    Given: Estou na página de enviar notas para os alunos
-    When: Eu clico no campo de Requisitos associado ao aluno "Mr T", preenchendo com "11"
-    And: Clico no campo de Gerência de Configuração associado ao aluno "Mr T", preenchendo com "-1"
-    Then: O sistema associa a nota "10" ao campo de Requisitos do aluno "Mr T"
-    And: O sistema associa a nota "0" ao campo de Gerência de Configuração do aluno "Mr T"
+    Given Estou na página de enviar notas para os alunos
+    When Eu clico no campo de Requisitos associado ao aluno "Mr T", preenchendo com "11"
+    And Clico no campo de Gerência de Configuração associado ao aluno "Mr T", preenchendo com "-1"
+    Then O sistema associa a nota "10" ao campo de Requisitos do aluno "Mr T"
+    And O sistema associa a nota "0" ao campo de Gerência de Configuração do aluno "Mr T"
 
 Scenario: Cadastrando notas inadequadas para alunos
     Given: Estou na página de enviar notas para os alunos
