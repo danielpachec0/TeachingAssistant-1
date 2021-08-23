@@ -8,6 +8,7 @@ export class Aluno {
     this.clean();
   }
 
+
   clean(): void {
     this.nome = "";
     this.cpf = "";
