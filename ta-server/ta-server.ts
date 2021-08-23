@@ -91,6 +91,7 @@ taserver.post("/sendnotas", function (req: express.Request, res: express.Respons
 
     sendNotas(aluno, "[Média Final]", `Sua média final foi: ${media}\nSituação:${situacao}`)
         .then((value) => {
+          console.log(value);
           if (value != -0) {
             res.send({"success": "O relatório foi enviado com sucesso!"});
           } else {

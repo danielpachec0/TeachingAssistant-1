@@ -76,6 +76,13 @@ async function assertNotas(cpf, notaRequisito, notaConfig) {
     await req.getText() == notaRequisito;
 	await conf.getText() == notaConfig;
 }
+
+async function assertBotaoPressionado(nomebotao, cpf) {
+    var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
+    var aluno = allalunos.filter(elem => sameCPF(elem,cpf)).get(0);
+    await aluno.all(by.buttonText(nomebotao)).click();
+}
+
 async function assertEnviarEmail(email) {
 	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
     var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
@@ -84,14 +91,22 @@ async function assertEnviarEmail(email) {
         expect(message).to.equal("Relatório enviado com sucesso!");
     })
 }
+
 async function assertEnviarEmailBloqueado(email) {
 	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
     var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
 	await aluno.all(by.buttonText('Enviar')).click();
     await $("div[id='sendMessage']").getText().then(function (message){
         expect(message).to.equal("");
-    })
+    })}
+
+async function assertMensagemEMail(msg){
+    await $("div[id='sendMessage']").getText().then(function (message){
+        expect(message).to.equal(msg);
+    });
 }
+
+
 
 
 defineSupportCode(function ({ Given, When, Then }) {
@@ -123,7 +138,7 @@ defineSupportCode(function ({ Given, When, Then }) {
         await assertElementsWithSameCPFAndNameAndEmailMETAS(1,cpf,name,email);
     })
 	//eu posso ver o aluno com CPF "683" com notas "8" e "7" respectivamente
-	Then(/^eu posso ver o aluno com CPF "(\d*)" com notas "(\d*)" e "(\d*)" respectivamente$/, async (cpf, notaReq,notaConf) => {
+	Then(/^eu posso ver o aluno com CPF "([^\"]*)" com notas "([^\"]*)" e "([^\"]*)" respectivamente$/, async (cpf, notaReq,notaConf) => {
         await assertElementsWithSameCPFMETAS(1,cpf);
 		await assertNotas(cpf,notaReq,notaConf);
     });
@@ -137,10 +152,21 @@ defineSupportCode(function ({ Given, When, Then }) {
     });
 
 	//eu atribuo ao aluno "Charles" com CPF "683" as notas "8" e "7" respectivamente
-	When(/^eu atribuo ao aluno com CPF "(\d*)" as notas "(\d*)" e "(\d*)" respectivamente$/, async (cpf,notaReq,notaConf) => {
+	When(/^eu atribuo ao aluno com CPF "([^\"]*)" as notas "([^\"]*)" e "([^\"]*)" respectivamente$/, async (cpf,notaReq,notaConf) => {
         await updateAluno(cpf,notaReq,notaConf);
     });
 
+    When(/^eu clico no botão "([^\"]*)" referente ao aluno de CPF "([^\"]*)"$/, async (nomebotao, cpf) => {
+        await assertBotaoPressionado(nomebotao, cpf);
+    });
+
+    Then(/^eu vejo a mensagem "([^\"]*)" na tela$/, async (msg) => {
+        await assertMensagemEMail(msg);
+    })
+
+    Then(/^eu não vejo mensagem na tela$/, async () => {
+        await assertMensagemEMail("");
+    })
 
     Given(/^the system has no student with CPF "(\d*)"$/, async (cpf) => {
        await request.get(base_url + "alunos")
@@ -162,5 +188,7 @@ defineSupportCode(function ({ Given, When, Then }) {
         await request.get(base_url + "alunos")
                      .then(body => expect(body.includes(resposta)).to.equal(true));
     });
+
+
 
 })

@@ -5,9 +5,10 @@ import {SentMessageInfo} from "nodemailer";
 export class EMailSender {
     private domains: string[] = ['@cin.ufpe.br', '@gmail.com', '@yahoo.com.br', '@ufpe.br']
 
-    sendEMail(aluno: Aluno, subject: string, text: string): SentMessageInfo | null{
+    sendEMail(aluno: Aluno, subject: string, text: string): number | null{
 
-        if (!this.emailForaDoPadrao(aluno.email)) {
+        if (!this.emailForaDoPadrao(aluno.email) && !this.metasInvalidas(aluno)) {
+            this.metasInvalidas(aluno);
             const transporter = nodemailer.createTransport({
                 service: 'Gmail',
                 auth: {
@@ -42,4 +43,14 @@ export class EMailSender {
         }
         return true;
     }
+
+    private metasInvalidas(aluno: Aluno): boolean {
+        for (let key in aluno.metas){
+            if (isNaN(aluno.metas[key]) || aluno.metas[key] < 0 || aluno.metas[key] > 10){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

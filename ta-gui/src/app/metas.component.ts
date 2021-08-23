@@ -14,15 +14,19 @@ import { AlunoService } from './aluno.service';
     alunos: Aluno[];
     public message = '';
     public showmessage = false;
+    public success = false;
 
     enviarRelatorio(aluno: Aluno): void {
       this.alunoService.enviarRelatorio(aluno).subscribe(
-        (a) => {
-          if (a == null) {
-          this.message = 'Erro ao enviar o relatório!';
+        (r) => {
+          if (r == null) {
+          this.message = 'E-mail ou metas inválidos!';
+          this.success = false;
         } else {
           this.message = 'Relatório enviado com sucesso!';
-        }}
+          this.success = true;
+        }
+          this.showMessage();}
       );
     }
 
@@ -35,7 +39,7 @@ import { AlunoService } from './aluno.service';
       );
     }
 
-    onLeave(): void {
+    removeMessage(): void {
       this.showmessage = false;
       this.message = '';
     }

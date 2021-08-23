@@ -11,10 +11,12 @@
     <td name="nomelist">{{a.nome}}</td>
     <td name="cpflist">{{a.cpf}}</td>
     <td name="emaillist">{{a.email}}</td>
-    <td class="meta"><input id="AB" [(ngModel)]="a.metas['requisitos']" (change)="atualizarAluno(a)" name="requisitosBox"></td>
+    <td class="meta"><input [(ngModel)]="a.metas['requisitos']" (change)="atualizarAluno(a)" name="requisitosBox"></td>
     <td class="meta"><input [(ngModel)]="a.metas['gerDeConfiguracao']" (change)="atualizarAluno(a)" name="gerDeConfiguracaoBox"></td>
-    <td><button (focusout)="onLeave()" (click)="enviarRelatorio(a); showMessage()" [disabled]="!a.metas['requisitos'] || !a.metas['gerDeConfiguracao']">Enviar</button></td>
+    <td><button (focusout)="removeMessage()" (click)="enviarRelatorio(a)" [disabled]="a.metas['requisitos'] == undefined ||
+    !a.metas['requisitos'].trim() || !a.metas['gerDeConfiguracao'].trim()">Enviar</button></td>
  </tr>
  </table>
-
-<div id="sendMessage" [ngStyle]="{'visibility': (showmessage) ? 'visible' : 'hidden'}">{{this.message}}</div>
+<div id="warning">O botão de envio ficará disponível após o preenchimento de todos os campos de nota</div>
+<div id="sendMessage" [ngStyle]="{'visibility': (showmessage) ? 'visible' : 'hidden', 'color': (success) ? 'lime' : 'red'}">
+  {{this.message}}</div>
