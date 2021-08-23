@@ -39,7 +39,9 @@ export class AlunoService {
     return this.http.post<any>(this.taURL + `/sendnotas`, aluno, {headers: this.headers})
       .pipe(
         retry(2),
-        map(res => {if (res.success) {return aluno; } else {return null; }})
+        map(res => {
+          console.log(res);
+          if (res.success) {return aluno; } else {return null; }})
       );
   }
 

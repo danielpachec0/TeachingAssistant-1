@@ -17,7 +17,9 @@ import { AlunoService } from './aluno.service';
 
     enviarRelatorio(aluno: Aluno): void {
       this.alunoService.enviarRelatorio(aluno).subscribe(
-        (a) => {if (a == null) {
+        (a) => {
+          console.log(a);
+          if (a == null) {
           this.message = 'Erro ao enviar o relatório!';
         } else {
           this.message = 'Relatório enviado com sucesso!';

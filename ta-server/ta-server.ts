@@ -48,7 +48,7 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
 })
 
 
-taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
+taserver.post("/sendnotas", async function (req: express.Request, res: express.Response) {
   var aluno: Aluno = <Aluno>req.body;
   var media: Number = calcular_media(aluno)
   var situacao: String = ""
@@ -60,12 +60,16 @@ taserver.post("/sendnotas", function (req: express.Request, res: express.Respons
     } else {
       situacao = "Reprovado por média"
     }
-    if (sendNotas(aluno, "[Média Final]", `Sua média final foi: ${media}\nSituação:${situacao}`) != null) {
-      res.send({"success": "O relatório foi enviado com sucesso!"});
-    } else {
-      res.send({"failure": "O relatório não pôde ser enviado!"});
-    }
+
+    sendNotas(aluno, "[Média Final]", `Sua média final foi: ${media}\nSituação:${situacao}`)
+        .then((value) => {
+          if (value != -0) {
+            res.send({"success": "O relatório foi enviado com sucesso!"});
+          } else {
+            res.send({"failure": "O relatório não pôde ser enviado!"});
+          }});
   } catch (err) {
+    console.log("Aqui!")
     console.log(err)
   }
 
@@ -85,8 +89,8 @@ function calcular_media(aluno: Aluno): Number {
   return mean/length
 }
 
-async function sendNotas(aluno: Aluno, subject: string,text: string): Promise<SentMessageInfo> {
-  return emailSender.sendEMail(aluno, subject, text);
+async function sendNotas(aluno: Aluno, subject: string,text: string): Promise<number> {
+  return-await emailSender.sendEMail(aluno, subject, text);
 }
 
 function closeServer(): void {
