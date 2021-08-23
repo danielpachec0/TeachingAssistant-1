@@ -186,12 +186,12 @@ defineSupportCode(function ({ Given, When, Then }) {
 	
 	//When eu tento mandar um email para o aluno com CPF "777"
     When(/^eu tento mandar um email para o aluno com CPF "(\d*)"$/, async (cpf) => {
-        let aluno = {"nome": name, "cpf" : cpf, "email":""};
-        var options:any = {method: 'POST', uri: (base_url + "aluno"), body:aluno, json: true};
+		const body = {cpf: cpf};
+        var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
         await request(options)
               .then(body => 
                    expect(JSON.stringify(body)).to.equal(
-                       '{"success":"O aluno foi cadastrado com sucesso"}'));
+                       '{"success":"O relatório foi enviado com sucesso!"}'));
     });
 
     Then(/^the system now stores "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
