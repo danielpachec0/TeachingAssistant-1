@@ -174,8 +174,8 @@ defineSupportCode(function ({ Given, When, Then }) {
                 .then(body => 
                    expect(body.includes(`"cpf":"${cpf}"`)).to.equal(false));
     });
-	//o sistema guarda o aluno "Gabriel" com CPF "777" e email "cgcc@cin.ufpe.br" e notas "5" e "6"
-	Given(/^o sistema guarda o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" e notas "(\d*)" e "(\d*)"$/, async (name, cpf, email, notaReq, notaConf) => {
+	//o sistema guarda o aluno "Gabriel" com CPF "779" e email "cgcc@cin.ufpe.br" e notas "5" e "z"
+	Given(/^o sistema guarda o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" e notas "([^\"]*)" e "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
         let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}};
         var options:any = {method: 'POST', uri: (base_url + "aluno"), body:aluno, json: true};
         await request(options)
@@ -184,14 +184,22 @@ defineSupportCode(function ({ Given, When, Then }) {
                        '{"success":"O aluno foi cadastrado com sucesso"}'));
     });
 	
-	//When eu tento mandar um email para o aluno com CPF "777"
-    When(/^eu tento mandar um email para o aluno com CPF "(\d*)"$/, async (cpf) => {
+	//Then o sistema envia com sucesso o email de relatorio para o aluno com CPF "777"
+    Then(/^o sistema envia com sucesso o email de relatorio para o aluno com CPF "(\d*)"$/, async (cpf) => {
 		const body = {cpf: cpf};
         var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
         await request(options)
               .then(body => 
                    expect(JSON.stringify(body)).to.equal(
                        '{"success":"O relatório foi enviado com sucesso!"}'));
+    });
+	Then(/^o sistema falha ao enviar email de relatorio para o aluno com CPF "(\d*)"$/, async (cpf) => {
+		const body = {cpf: cpf};
+        var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
+        await request(options)
+              .then(body => 
+                   expect(JSON.stringify(body)).to.equal(
+                       '{"failure":"O relatório não pôde ser enviado!"}'));
     });
 
     Then(/^the system now stores "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {

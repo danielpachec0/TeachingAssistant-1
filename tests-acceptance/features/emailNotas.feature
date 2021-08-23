@@ -12,8 +12,7 @@ Scenario: Aluno com notas preenchidas
 
 Scenario: Aluno com notas preenchidas, serviço
 	Given o sistema guarda o aluno "Gabriel" com CPF "777" e email "cgcc@cin.ufpe.br" e notas "5" e "6"
-	When eu tento mandar um email para o aluno com CPF "777"
-	Then o email é enviado com o valor "5.5" como média
+	Then o sistema envia com sucesso o email de relatorio para o aluno com CPF "777"
 
 Scenario: Aluno com notas parcialmente preenchidas
 	Given eu estou na pagina do aluno
@@ -33,6 +32,10 @@ Scenario: Aluno com email invalido
 	Then eu posso ver o aluno com CPF "12345678900" com notas "5" e "1" respectivamente
 	And eu vejo a mensagem "E-mail ou metas inválidos!" na tela
 
+Scenario: Aluno com email invalido, serviço
+	Given o sistema guarda o aluno "Gabriel" com CPF "778" e email "cgcc.br" e notas "5" e "6"
+	Then o sistema falha ao enviar email de relatorio para o aluno com CPF "778"
+
 Scenario: Aluno com metas inválidas
 	Given eu estou na pagina do aluno
 	And eu posso ver o aluno "Pedro" com CPF "05042316426" e email "ptl@cin.ufpe.br" na lista de estudantes
@@ -41,3 +44,7 @@ Scenario: Aluno com metas inválidas
 	And eu clico no botão "Enviar" referente ao aluno de CPF "05042316426"
 	Then eu posso ver o aluno com CPF "05042316426" com notas "w" e "5" respectivamente
 	And eu vejo a mensagem "E-mail ou metas inválidos!" na tela
+
+Scenario: Aluno com metas inválidas, serviço
+	Given o sistema guarda o aluno "Gabriel" com CPF "779" e email "cgcc@cin.ufpe.br" e notas "5" e "z"
+	Then o sistema falha ao enviar email de relatorio para o aluno com CPF "779"
