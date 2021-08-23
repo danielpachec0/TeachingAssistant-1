@@ -83,7 +83,7 @@ defineSupportCode(function ({ Given
         await $("a[name='metas']").click();
     })
 
-    Given(/^estou na pagina de roteiros$/, async () => {
+    Given(/^I am at the roteiros page$/, async () => {
         await browser.get("http://localhost:4200");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='roteiros']").click();
@@ -95,7 +95,7 @@ defineSupportCode(function ({ Given
 		await updateAluno(name,cpf,notaReq,notaConf);
     });
 
-    When(/^o envio de email for requisitado para o "([^"]*)" com data limite "([^"]*)"$/, async (nameRoteiro, dataLimite) => {
+    When(/^I request the warning email about the roteiro "([^"]*)" with limit date "([^"]*)"$/, async (nameRoteiro, dataLimite) => {
         let roteiro = {"nome":nameRoteiro,"dataDeEntrega":dataLimite};
         var options:any = {method: 'POST', uri: (base_url + "testeEmailRoteiro"), body:roteiro, json: true};
         await request(options)
@@ -104,13 +104,13 @@ defineSupportCode(function ({ Given
                        '{"success":"Os emails foram enviado com sucesso"}'));
     });
 
-    Then(/^consigo ver uma mensagem de erro em registro de roteiro$/, async () => {
+    Then(/^I receive an error message in regards to roteiro registration$/, async () => {
         var allmsgs : ElementArrayFinder = element.all(by.name('msgroteiroexistente'));
         await assertTamanhoEqual(allmsgs,1);
     });
 
-    When(/^um roteiro é registrado com nome "([^"]*)" data limite dia "([^"]*)"$/, async (nameRoteiro, dataLimite) => {
-        await $("input[name='namebox']").sendKeys(<string> nameRoteiro);
+    When(/^I register a roteiro "([^"]*)" with limit date "([^"]*)"$/, async (nomeRoteiro, dataLimite) => {
+        await $("input[name='namebox']").sendKeys(<string> nomeRoteiro);
         await $("input[name='datebox']").sendKeys(<string> dataLimite);
         await element(by.buttonText('Adicionar')).click();
     });
@@ -131,14 +131,19 @@ defineSupportCode(function ({ Given
         await assertRoteiroWithSameName(nomeRoteiro);
     });
 
-    Then(/^eu consigo ver o roteiro "([^"]*)" com data limite "([^"]*)" na lista de roteiros$/, async (name,date) => {
-        await assertRoteiroWithSameName(name);
+    Given(/^I have the roteiro "([^"]*)" with limit date "([^"]*)" in the roteiros list$/, async (nomeRoteiro, dataLimite) => {
+        await criarRoteiro(nomeRoteiro, dataLimite);
+        await assertElementsWithSameDateAndName(1,dataLimite,nomeRoteiro);
     });
 
-    Then(/^o "([^"]*)" ainda é armazenado na lista de roteiros$/, async (name) => {
+    Then(/^I can see the roteiro "([^"]*)" with limit date "([^"]*)" in the roteiros list$/, async (nomeRoteiro, dataLimite) => {
+        await assertElementsWithSameDateAndName(1,dataLimite,nomeRoteiro);
+    });
+
+    Then(/^the roteiro "([^"]*)" is still in the roteiros database$/, async (nomeRoteiro) => {
         await request.get(base_url + "roteiros")
                 .then(body => 
-                   expect(body.includes(`"nome":"${name}"`)).to.equal(true));
+                   expect(body.includes(`"nome":"${nomeRoteiro}"`)).to.equal(true));
     });
 
     Then(/^I cannot see "([^\"]*)" with CPF "(\d*)" in the students list$/, async (name, cpf) => {
@@ -156,12 +161,8 @@ defineSupportCode(function ({ Given
                    expect(body.includes(`"cpf":"${cpf}"`)).to.equal(false));
     });
 
-    When(/^tento registrar o roteiro "([^\"]*)" data limite dia "([^\"]*)"$/, async (name, data) => {
-        await criarRoteiro(name,data);
-    });
-
-    Then(/^não vejo "([^\"]*)" com data de entrega "([^\"]*)" na lista de roteiros$/, async (name, data) => {
-        await assertElementsWithSameDateAndName(0,data,name);
+    Then(/^I can not see "([^\"]*)" with limit date "([^\"]*)" in the roteiros list$/, async (nomeRoteiro, dataLimite) => {
+        await assertElementsWithSameDateAndName(0,nomeRoteiro,dataLimite);
     });
 
     When(/^I register the student "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
@@ -171,6 +172,15 @@ defineSupportCode(function ({ Given
               .then(body => 
                    expect(JSON.stringify(body)).to.equal(
                        '{"success":"O aluno foi cadastrado com sucesso"}'));
+    });
+
+    Given(/^I have the roteiro "([^\"]*)" with limit date "([^\"]*)" registered in the database$/, async (nomeRoteiro, dataLimite) => {
+        let aluno = {"nome": nomeRoteiro, "dataDeEntrega" : dataLimite};
+        var options:any = {method: 'POST', uri: (base_url + "roteiro"), body:aluno, json: true};
+        await request(options)
+              .then(body => 
+                   expect(JSON.stringify(body)).to.equal(
+                       '{"success":"O roteiro foi cadastrado com sucesso"}'));
     });
 
     Then(/^the system now stores "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
