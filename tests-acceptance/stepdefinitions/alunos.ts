@@ -174,8 +174,18 @@ defineSupportCode(function ({ Given, When, Then }) {
                 .then(body => 
                    expect(body.includes(`"cpf":"${cpf}"`)).to.equal(false));
     });
-
-    When(/^I register the student "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
+	//o sistema guarda o aluno "Gabriel" com CPF "777" e email "cgcc@cin.ufpe.br" e notas "5" e "6"
+	Given(/^o sistema guarda o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" e notas "(\d*)" e "(\d*)"$/, async (name, cpf, email, notaReq, notaConf) => {
+        let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}};
+        var options:any = {method: 'POST', uri: (base_url + "aluno"), body:aluno, json: true};
+        await request(options)
+              .then(body => 
+                   expect(JSON.stringify(body)).to.equal(
+                       '{"success":"O aluno foi cadastrado com sucesso"}'));
+    });
+	
+	//When eu tento mandar um email para o aluno com CPF "777"
+    When(/^eu tento mandar um email para o aluno com CPF "(\d*)"$/, async (cpf) => {
         let aluno = {"nome": name, "cpf" : cpf, "email":""};
         var options:any = {method: 'POST', uri: (base_url + "aluno"), body:aluno, json: true};
         await request(options)
