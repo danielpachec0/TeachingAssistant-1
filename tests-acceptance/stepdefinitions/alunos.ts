@@ -131,6 +131,7 @@ defineSupportCode(function ({ Given, When, Then }) {
     });
 
     Then(/^eu posso ver o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" na lista de estudantes$/, async (name, cpf,email) => {
+		await criarAluno(name,cpf,email);
         await assertElementsWithSameCPFAndNameAndEmail(1,cpf,name,email);
     });
 	//eu posso ver o aluno "Charles" com CPF "683" e email "cgcc@cin.ufpe.br" na lista de metas
