@@ -76,6 +76,18 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
 })
 
 
+taserver.post('/testeEmailRoteiro', function (req: express.Request, res: express.Response) {
+  var roteiro: Roteiro = <Roteiro> req.body;
+  try {
+    sendMailRoteiro(cadastroAlunos.alunos, roteiro.nome, roteiro.dataDeEntrega);
+    res.send({"success": "Os emails foram enviado com sucesso"})
+  } catch (err) {
+    console.log(err)
+    res.send({"failure": "Não foi possivel enviar os emails"});
+  }
+})
+
+//----------------------------------------
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var cpf: string = <string> req.body.cpf;
   var aluno: Aluno = cadastroAlunos.getAlunosbyCPF(cpf);
@@ -123,6 +135,47 @@ function calcular_media(aluno: Aluno): Number {
 async function sendNotas(aluno: Aluno, subject: string,text: string): Promise<number> {
   return-await emailSender.sendEMail(aluno, subject, text);
 }
+
+async function sendMailRoteiro(alunos: Aluno[], nomeRoteiro: string, data: string): Promise<void> {
+
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: "ta.ess.2020.2@gmail.com",
+      pass: "ess2020a"
+    }
+  });
+
+  for (let i = 0; i < alunos.length; i++) {
+    const aluno = alunos[i];
+    const mailOptions = {
+      from: `ta.ess.2020.2@gmail.com`,
+      to: aluno.email,
+      subject: "subject",
+      text: `Atenção ${aluno.nome}! O roteiro  ${nomeRoteiro} deve ser entregue até o fim do dia:(${data})`,
+      //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
+    };
+    let info = await transporter.sendMail(mailOptions);
+  }
+}
+
+function checkDate(dataRoteiro: string): boolean{
+  let dataRoteiroDate: number = Date.parse(dataRoteiro);
+  let dataAtual: number =  Date.now();
+  if(dataRoteiroDate - dataAtual <= (86400000) && dataRoteiroDate - dataAtual > 0){
+    return true;
+  }
+  return false;
+}
+
+cron.schedule("0 0 * * *", () => {
+  for (let i = 0; i < cadastroRoteiros.roteiros.length; i++) {
+    const element = cadastroRoteiros.roteiros[i];
+    if(checkDate(element.dataDeEntrega)){
+      sendMailRoteiro(cadastroAlunos.alunos, element.nome, element.dataDeEntrega);
+    }
+  }
+});
 
 function closeServer(): void {
   server.close();
