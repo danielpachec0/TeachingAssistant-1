@@ -1,6 +1,6 @@
 import { assert } from 'console';
 import { defineSupportCode } from 'cucumber';
-import { browser, $, element, ElementArrayFinder, by } from 'protractor';
+import {browser, $, element, ElementArrayFinder, by, WebElement, Key} from 'protractor';
 
 let chai = require('chai').use(require('chai-as-promised'));
 let expect = chai.expect;
@@ -64,6 +64,8 @@ async function updateAluno(cpf, notaRequisito, notaConfig) {
 	await conf.clear();
 	await req.sendKeys(<string> notaRequisito);
 	await conf.sendKeys(<string> notaConfig);
+    await req.sendKeys(" ", Key.BACK_SPACE);
+    await conf.sendKeys(" ", Key.BACK_SPACE);
 }
 
 async function assertNotas(cpf, notaRequisito, notaConfig) {
@@ -77,18 +79,21 @@ async function assertNotas(cpf, notaRequisito, notaConfig) {
 async function assertEnviarEmail(email) {
 	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
     var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
-	var button = aluno.all(by.buttonText('Enviar'));
-	await expect(button.getAttribute('disabled')).to.eventually.equal(false);
     await aluno.all(by.buttonText('Enviar')).click();
+    await $("div[id='sendMessage']").getText().then(function (message){
+        expect(message).to.equal("Relatório enviado com sucesso!");
+    })
 }
 async function assertEnviarEmailBloqueado(email) {
 	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
     var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
-	var button = aluno.all(by.buttonText('Enviar')).get(0);
-	var disabledbutton = button.getAttribute('disabled');
-	//console.log(disabledbutton);
-	await expect(button.isEnabled()).to.eventually.equal(true);
+	await aluno.all(by.buttonText('Enviar')).click();
+    await $("div[id='sendMessage']").getText().then(function (message){
+        expect(message).to.equal("");
+    })
 }
+
+
 defineSupportCode(function ({ Given, When, Then }) {
 
     Given(/^eu estou na pagina do aluno$/, async () => {
@@ -124,7 +129,7 @@ defineSupportCode(function ({ Given, When, Then }) {
     });
 
 	Then(/^eu envio um email de resultado para "([^\"]*)"$/, async (email) => {
-		await assertEnviarEmailBloqueado(email);
+		await assertEnviarEmail(email);
     });
 
 	Then(/^eu não consigo enviar um email de resultado para "([^\"]*)"$/, async (email) => {

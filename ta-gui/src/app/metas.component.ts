@@ -12,15 +12,15 @@ import { AlunoService } from './aluno.service';
     constructor(private alunoService: AlunoService) {}
 
     alunos: Aluno[];
-    private message = '';
-    private showmessage = false;
+    public message = '';
+    public showmessage = false;
 
     enviarRelatorio(aluno: Aluno): void {
       this.alunoService.enviarRelatorio(aluno).subscribe(
         (a) => {if (a == null) {
-          this.message = 'Relatório enviado com sucesso!';
-        } else {
           this.message = 'Erro ao enviar o relatório!';
+        } else {
+          this.message = 'Relatório enviado com sucesso!';
         }}
       );
     }
@@ -34,8 +34,9 @@ import { AlunoService } from './aluno.service';
       );
     }
 
-    onMove(): void {
+    onLeave(): void {
       this.showmessage = false;
+      this.message = '';
     }
 
     showMessage(): void {

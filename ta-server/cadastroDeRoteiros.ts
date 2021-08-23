@@ -5,7 +5,7 @@ export class CadastroDeRoteiros {
 
     cadastrar(roteiro: Roteiro): Roteiro {
         var result = null;
-        if (this.cpfNaoCadastrado(roteiro.nome)) {
+        if (this.roteiroNaoCadastrado(roteiro.nome)) {
           result = new Roteiro();
           result.copyFrom(roteiro);
           this.roteiros.push(result);
@@ -13,12 +13,12 @@ export class CadastroDeRoteiros {
         return result;
     }
 
-    cpfNaoCadastrado(nome: string): boolean {
-        return !this.roteiros.find(a => a.nome == nome);
+    roteiroNaoCadastrado(nome: string): boolean {
+        return !this.roteiros.find(r => r.nome == nome);
     }
 
     atualizar(roteiro: Roteiro): Roteiro {
-        var result: Roteiro = this.roteiros.find(a => a.nome == roteiro.nome);
+        var result: Roteiro = this.roteiros.find(r => r.nome == roteiro.nome);
         if (result) result.copyFrom(roteiro);
         return result;
     }
