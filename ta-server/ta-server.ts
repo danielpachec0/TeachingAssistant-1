@@ -71,6 +71,17 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
   }
 })
 
+taserver.post('/testeEmailRoteiro', function (req: express.Request, res: express.Response) {
+  var roteiro: Roteiro = <Roteiro> req.body;
+  try {
+    sendMailRoteiro(cadastroAlunos.alunos, roteiro.nome, roteiro.dataDeEntrega);
+    res.send({"success": "Os emails foram enviado com sucesso"})
+  } catch (err) {
+    console.log(err)
+    res.send({"failure": "Não foi possivel enviar os emails"});
+  }
+})
+
 //----------------------------------------
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var aluno: Aluno = <Aluno> req.body;
