@@ -141,7 +141,7 @@ defineSupportCode(function ({ Given
     });
 
     Then(/^the roteiro "([^"]*)" is still in the roteiros database$/, async (nomeRoteiro) => {
-        await request.get(base_url + "roteiros")
+        await request.get(base_url + "roteiro")
                 .then(body => 
                    expect(body.includes(`"nome":"${nomeRoteiro}"`)).to.equal(true));
     });
