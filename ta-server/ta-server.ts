@@ -7,11 +7,19 @@ import {Aluno} from '../common/aluno';
 import {Roteiro} from '../common/roteiro';
 import {CadastroDeAlunos} from './cadastrodealunos';
 import { CadastroDeRoteiros } from './cadastroDeRoteiros';
+import {EmailSender} from "./email-sender";
+import {SentMessageInfo} from "nodemailer";
+import { EmailNotas } from './emailNotas';
+import { EmailRoteiros } from './emailRoteiros';
 
 var taserver = express();
 
 var cadastroAlunos: CadastroDeAlunos = new CadastroDeAlunos();
 var cadastroRoteiros: CadastroDeRoteiros = new CadastroDeRoteiros();
+var cadastro: CadastroDeAlunos = new CadastroDeAlunos();
+var emailSender: EmailSender = new EmailSender();
+var emailNotas: EmailNotas = new EmailNotas();
+var emailRoteiros: EmailRoteiros = new EmailRoteiros();
 
 var allowCrossDomain = function(req: any, res: any, next: any) {
     res.header('Access-Control-Allow-Origin', "*");
@@ -71,89 +79,14 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
   }
 })
 
-//----------------------------------------
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var aluno: Aluno = <Aluno> req.body;
-  var media: Number = calcular_media(aluno)
-  var situacao: String = ""
-  try {
-    if(media >= 7) {
-      situacao = "Aprovado por média"
-    } else if (media >= 3) {
-      situacao = "Final"
-    } else {
-      situacao = "Reprovado por média"
-    }
-    sendNotas(aluno, "[Média Final]", `Sua média final foi: ${media}\nSituação:${situacao}`)
-    res.send({"success": "O relatório foi enviado com sucesso"});
-  } catch (err) {
-    console.log(err)
-    res.send({"failure": "O relatório não pôde ser enviado"});
+  if(emailNotas.createMail(aluno)){
+    res.send({"success": "Email enviado"});
+  }else{
+    res.send({"failure": "O email não pode ser enviado"});
   }
-
 })
-
-var server = taserver.listen(3000, function () {
-  console.log('Listening on port 3000!')
-})
-
-function calcular_media(aluno: Aluno): Number {
-  var mean = 0
-  var length = Object.keys(aluno.metas).length
-  for (let key in aluno.metas) {
-    let value = +aluno.metas[key];
-    mean += value
-  }
-  return mean/length
-}
-
-async function sendNotas(aluno: Aluno, subject: string,text: string): Promise<void> {
-
-  let testAccount = await nodemailer.createTestAccount();
-
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: "ta.ess.2020.2@gmail.com",
-      pass: "ess2020a"
-    }
-  });
-
-  const mailOptions = {
-    from: `ta.ess.2020.2@gmail.com`,
-    to: aluno.email,
-    subject: subject,
-    text: text,
-    //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
-  };
-
-  let info = await transporter.sendMail(mailOptions);
-}
-
-//----------------------------------------------------
-
-async function sendMailRoteiro(alunos: Aluno[], nomeRoteiro: string, data: string): Promise<void> {
-
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: "ta.ess.2020.2@gmail.com",
-      pass: "ess2020a"
-    }
-  });
-
-  for (let i = 0; i < alunos.length; i++) {
-    const aluno = alunos[i];
-    const mailOptions = {
-      from: `ta.ess.2020.2@gmail.com`,
-      to: aluno.email,
-      subject: "subject",
-      text: `Atenção ${aluno.nome}! O roteiro  ${nomeRoteiro} deve ser entregue até o fim do dia:(${data})`,
-      //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
-    };
-    let info = await transporter.sendMail(mailOptions);
-  }
-}
 
 function checkDate(dataRoteiro: string): boolean{
   let dataRoteiroDate: number = Date.parse(dataRoteiro);
@@ -165,13 +98,21 @@ function checkDate(dataRoteiro: string): boolean{
 }
 
 cron.schedule("0 0 * * *", () => {
+  console.log("teste");
   for (let i = 0; i < cadastroRoteiros.roteiros.length; i++) {
-    const element = cadastroRoteiros.roteiros[i];
-    if(checkDate(element.dataDeEntrega)){
-      sendMailRoteiro(cadastroAlunos.alunos, element.nome, element.dataDeEntrega);
+    const roteiro = cadastroRoteiros.roteiros[i];
+    if(checkDate(roteiro.dataDeEntrega)){
+      for (let j = 0; j < cadastroAlunos.alunos.length; j++) {
+        const aluno = cadastroAlunos.alunos[j];
+        emailRoteiros.createMail(roteiro, aluno);
+      }
     }
   }
 });
+
+var server = taserver.listen(3000, function () {
+  console.log('Listening on port 3000!')
+})
 
 function closeServer(): void {
   server.close();
