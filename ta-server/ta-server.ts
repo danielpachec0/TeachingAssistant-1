@@ -77,7 +77,9 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
 
 
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
-  var aluno: Aluno = <Aluno> req.body;
+  var cpf: string = <string> req.body.cpf;
+  var aluno: Aluno = cadastroAlunos.getAlunosbyCPF(cpf);
+  console.log(aluno);
   var media: Number = calcular_media(aluno)
   var situacao: String = ""
   try {

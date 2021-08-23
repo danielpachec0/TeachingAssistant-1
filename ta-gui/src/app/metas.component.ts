@@ -16,8 +16,8 @@ import { AlunoService } from './aluno.service';
     public showmessage = false;
     public success = false;
 
-    enviarRelatorio(aluno: Aluno): void {
-      this.alunoService.enviarRelatorio(aluno).subscribe(
+    enviarRelatorio(cpf: string): void {
+      this.alunoService.enviarRelatorio(cpf).subscribe(
         (r) => {
           if (r == null) {
           this.message = 'E-mail ou metas inválidos!';

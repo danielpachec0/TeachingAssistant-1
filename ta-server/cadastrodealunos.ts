@@ -26,4 +26,7 @@ export class CadastroDeAlunos {
     getAlunos(): Aluno[] {
      return this.alunos;
    }
+   getAlunosbyCPF(cpf: string): Aluno {
+	return this.alunos.find(a => a.cpf == cpf);
+  }
 }

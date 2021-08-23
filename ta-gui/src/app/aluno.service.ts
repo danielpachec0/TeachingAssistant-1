@@ -35,13 +35,14 @@ export class AlunoService {
                );
   }
 
-  enviarRelatorio(aluno: Aluno): Observable<any> {
-    return this.http.post<any>(this.taURL + `/sendnotas`, aluno, {headers: this.headers})
+  enviarRelatorio(cpf: String): Observable<any> {
+	const body = {cpf: cpf};
+    return this.http.post<any>(this.taURL + `/sendnotas`, body, {headers: this.headers})
       .pipe(
         retry(2),
         map(res => {
           console.log(res);
-          if (res.success) {return aluno; } else {return null; }})
+          if (res.success) {return body; } else {return null; }})
       );
   }
 

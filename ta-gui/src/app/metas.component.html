@@ -13,7 +13,7 @@
     <td name="emaillist">{{a.email}}</td>
     <td class="meta"><input [(ngModel)]="a.metas['requisitos']" (change)="atualizarAluno(a)" name="requisitosBox"></td>
     <td class="meta"><input [(ngModel)]="a.metas['gerDeConfiguracao']" (change)="atualizarAluno(a)" name="gerDeConfiguracaoBox"></td>
-    <td><button (focusout)="removeMessage()" (click)="enviarRelatorio(a)" [disabled]="a.metas['requisitos'] == undefined ||
+    <td><button (focusout)="removeMessage()" (click)="enviarRelatorio(a.cpf)" [disabled]="a.metas['requisitos'] == undefined ||
     !a.metas['requisitos'].trim() || !a.metas['gerDeConfiguracao'].trim()">Enviar</button></td>
  </tr>
  </table>
