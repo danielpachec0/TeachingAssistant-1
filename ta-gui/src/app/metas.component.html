@@ -14,5 +14,6 @@
     <td class="meta"><input [(ngModel)]="a.metas['requisitos']" (change)="atualizarAluno(a)" name="requisitosBox"></td>
     <td class="meta"><input [(ngModel)]="a.metas['gerDeConfiguracao']" (change)="atualizarAluno(a)" name="gerDeConfiguracaoBox"></td>
     <td><button (click)="enviarRelatorio(a)" [disabled]="!a.metas['requisitos'] || !a.metas['gerDeConfiguracao']">Enviar</button></td>
+    <td>{{this.message}}</td>
  </tr>
  </table>
