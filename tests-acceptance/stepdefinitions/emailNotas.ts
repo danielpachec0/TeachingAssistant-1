@@ -1,4 +1,3 @@
-import { assert } from 'console';
 import { defineSupportCode } from 'cucumber';
 import {browser, $, element, ElementArrayFinder, by, WebElement, Key} from 'protractor';
 
@@ -36,12 +35,6 @@ async function assertElementsWithSameCPFAndNameAndEmailMETAS(n,cpf,name,email) {
     var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
 	var samecpfsandnameandemail = samecpfsandname.filter(elem => sameEmail(elem,email));
     await assertTamanhoEqual(samecpfsandnameandemail,n);
-}
-
-async function assertElementsWithSameCPFAndName(n,cpf,name) { 
-    var allalunos : ElementArrayFinder = element.all(by.name('alunolist'));
-    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
-    await assertTamanhoEqual(samecpfsandname,n);
 }
 
 async function assertElementsWithSameCPF(n,cpf) {
@@ -168,12 +161,6 @@ defineSupportCode(function ({ Given, When, Then }) {
     Then(/^eu não vejo mensagem na tela$/, async () => {
         await assertMensagemEMail("");
     })
-
-    Given(/^the system has no student with CPF "(\d*)"$/, async (cpf) => {
-       await request.get(base_url + "alunos")
-                .then(body => 
-                   expect(body.includes(`"cpf":"${cpf}"`)).to.equal(false));
-    });
 	//o sistema guarda o aluno "Gabriel" com CPF "779" e email "cgcc@cin.ufpe.br" e notas "5" e "z"
 	Given(/^o sistema guarda o aluno "([^\"]*)" com CPF "(\d*)" e email "([^\"]*)" e notas "([^\"]*)" e "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
         let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}};
@@ -201,13 +188,5 @@ defineSupportCode(function ({ Given, When, Then }) {
                    expect(JSON.stringify(body)).to.equal(
                        '{"failure":"O relatório não pôde ser enviado!"}'));
     });
-
-    Then(/^the system now stores "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {
-        let resposta = `{"nome":"${name}","cpf":"${cpf}","email":"","metas":{}`;
-        await request.get(base_url + "alunos")
-                     .then(body => expect(body.includes(resposta)).to.equal(true));
-    });
-
-
 
 })
