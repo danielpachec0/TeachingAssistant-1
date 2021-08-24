@@ -121,9 +121,6 @@ async function assertMensagemEMailAluno(msg, cpf, b: boolean){
     })
 }
 
-
-
-
 defineSupportCode(function ({ Given, When, Then }) {
 
     Given(/^eu estou na pagina do aluno$/, async () => {
@@ -131,7 +128,7 @@ defineSupportCode(function ({ Given, When, Then }) {
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='alunos']").click();
     })
-	Given(/^eu estou na pagina de metas$/, async () => {
+	Then(/^eu mudo para a pagina de metas$/, async () => {
         await browser.get("http://localhost:4200/");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='metas']").click();
@@ -206,6 +203,15 @@ defineSupportCode(function ({ Given, When, Then }) {
                    expect(JSON.stringify(body)).to.equal(
                        '{"success":"O aluno foi cadastrado com sucesso"}'));
     });
+
+    When(/^the grades of the student "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" are changed to "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
+        let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}, "relatorioEnviado": false};
+        var options:any = {method: 'PUT', uri: (base_url + "aluno"), body:aluno, json: true};
+        await request(options)
+              .then(body => 
+                   expect(JSON.stringify(body)).to.equal(
+                       '{"success":"O aluno foi atualizado com sucesso"}'));
+    });
 	
 	//Then o sistema envia com sucesso o email de relatorio para o aluno com CPF "777"
     When(/^o sistema envia o email de relatorio para o aluno com CPF "([^\"]*)"$/, async (cpf) => {
@@ -222,7 +228,7 @@ defineSupportCode(function ({ Given, When, Then }) {
         expect(response.some((aluno) => aluno.cpf == cpf && aluno.relatorioEnviado.toString() == bool)).to.equal(true);
     })
 
-	Then(/^o sistema falha ao enviar email de relatorio para o aluno com CPF "(\d*)"$/, async (cpf) => {
+	When(/^o sistema falha ao enviar email de relatorio para o aluno com CPF "(\d*)"$/, async (cpf) => {
 		const body = {cpf: cpf};
         var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
         await request(options)
