@@ -1,11 +1,11 @@
 
 import { Aluno } from '../../common/aluno';
-import {EMailSender} from "../email-sender";
+import {EmailSender} from "../email-sender";
 
 describe("O cadastro de alunos", () => {
-    var emailSender: EMailSender;
+    var emailSender: EmailSender;
 
-    beforeEach(() => (emailSender = new EMailSender()));
+    beforeEach(() => (emailSender = new EmailSender()));
 
     it('envia e-mails corretamente', function () {
         const aluno = new Aluno();

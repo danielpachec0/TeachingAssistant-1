@@ -16,19 +16,24 @@ import { AlunoService } from './aluno.service';
     public showmessage = false;
     public success = false;
 
-    enviarRelatorio(cpf: string): void {
-      this.alunoService.enviarRelatorio(cpf).subscribe(
-        (r) => {
-          if (r == null) {
-          this.message = 'E-mail ou metas inválidos!';
-          this.success = false;
-        } else {
-          this.message = 'Relatório enviado com sucesso!';
-          this.success = true;
-          this.updateAlunos();
-        }
-          this.showMessage(); }
-      );
+    enviarRelatorio(aluno: Aluno): void {
+      if (!this.invalidMetas(aluno)) {
+        this.alunoService.enviarRelatorio(aluno.cpf).subscribe(
+          (r) => {
+            if (r == null) {
+              this.message = 'E-mail inválido!';
+              this.success = false;
+            } else {
+              this.message = 'Relatório enviado com sucesso!';
+              this.success = true;
+              this.updateAlunos();
+            }
+          }
+        );
+      } else {
+        this.message = 'Metas inválidas!';
+      }
+      this.showMessage();
     }
 
     atualizarAluno(aluno: Aluno): void {
@@ -56,6 +61,15 @@ import { AlunoService } from './aluno.service';
           (as) =>  { this.alunos = as; },
           (msg) => { alert(msg.message); }
         );
+    }
+
+    invalidMetas(aluno: Aluno): boolean{
+      for (const key in aluno.metas) {
+        if (isNaN(aluno.metas[key]) || aluno.metas[key] < 0 || aluno.metas[key] > 10) {
+          return true;
+        }
+      }
+      return false;
     }
 
     ngOnInit(): void {

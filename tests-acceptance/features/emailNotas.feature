@@ -38,7 +38,7 @@ Feature: Like a teacher
 		And I assign to the student with CPF "12345678900" the grades "5" and "1" respectively
 		And I click on the button "Enviar" referent to the CPF student "12345678900"
 		Then I can see the student with CPF "12345678900" with grades "5" and "1" respectively
-		And I see a message "E-mail ou metas inválidos!" on the screen
+		And I see a message "E-mail inválido!" on the screen
 		And I see a message "Relatório pendente!" with a red background next to the student with CPF "12345678900"
 
 	Scenario: Student with invalid email, service
@@ -53,7 +53,7 @@ Feature: Like a teacher
 		And I assign to the student with CPF "05042316426" the grades "w" and "5" respectively
 		And I click on the button "Enviar" referent to the CPF student "05042316426"
 		Then I can see the student with CPF "05042316426" with grades "w" and "5" respectively
-		And I see a message "E-mail ou metas inválidos!" on the screen
+		And I see a message "Metas inválidas!" on the screen
 
 	Scenario: Student with Invalid Goals, service
 		Given The system keeps the student  "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and grades "5" and "z"
