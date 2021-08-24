@@ -22,6 +22,22 @@ export class CadastroDeRoteiros {
         if (result) result.copyFrom(roteiro);
         return result;
     }
+
+    remover(nome: string): boolean {
+        let index = -1;
+        for (const r of this.roteiros){
+            if (r.nome === nome) {
+                index = this.roteiros.indexOf(r);
+            }
+        }
+        if (index > -1){
+            this.roteiros.splice(index, 1)
+            return true;
+        } else {
+            return false;
+        }
+
+    }
    
     getRoteiros(): Roteiro[] {
         return this.roteiros;

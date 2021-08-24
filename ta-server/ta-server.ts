@@ -54,6 +54,16 @@ taserver.put('/roteiro', function (req: express.Request, res: express.Response) 
   }
 })
 
+taserver.delete('/roteiro', function (req:express.Request, res:express.Response) {
+  var nome: string = <string> req.body.nome;
+  let sucesso = cadastroRoteiros.remover(nome);
+  if (sucesso) {
+    res.send({"success": "O roteiro foi removido com sucesso"});
+  } else {
+    res.send({"failure": "O roteiro não pode ser removido"});
+  }
+})
+
 taserver.get('/alunos', function (req: express.Request, res: express.Response) {
   res.send(JSON.stringify(cadastroAlunos.getAlunos()));
 })
@@ -81,7 +91,8 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var cpf: string = <string> req.body.cpf;
   var aluno: Aluno = cadastroAlunos.getAlunosbyCPF(cpf);
-  if(emailSender.sendEMail(aluno, "Relaorio",emailNotas.createMail(aluno))){
+  var msg: boolean = emailNotas.createMail(aluno) !== "Metas invalidas";
+  if(msg && emailSender.sendEMail(aluno, "Relatorio",emailNotas.createMail(aluno))){
     res.send({"success": "O relatório foi enviado com sucesso"});
     cadastroAlunos.atualizarEmail(aluno);
   }else{
@@ -94,7 +105,9 @@ taserver.post('/testeEmailRoteiro', function (req: express.Request, res: express
   try {
     for (let j = 0; j < cadastroAlunos.alunos.length; j++) {
       const aluno = cadastroAlunos.alunos[j];
-      emailSender.sendEMail(aluno, "Lembrete Roteiro",emailRoteiros.createMail(roteiro, aluno))
+      emailSender.sendEMail(aluno, "Lembrete Roteiro",emailRoteiros.createMail(roteiro, aluno));
+      roteiro.enviado = true;
+      cadastroRoteiros.atualizar(roteiro);
     }
     res.send({"success": "Os emails foram enviados com sucesso"})
   } catch (err) {
@@ -121,6 +134,8 @@ cron.schedule("0 0 * * *", () => {
         const aluno = cadastroAlunos.alunos[j];
         emailSender.sendEMail(aluno, "Lembrete de roteiro",emailRoteiros.createMail(roteiro, aluno))
       }
+      roteiro.enviado = true;
+      cadastroRoteiros.atualizar(roteiro);
     }
   }
 });

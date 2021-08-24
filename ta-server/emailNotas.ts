@@ -7,7 +7,7 @@ export class EmailNotas{
     emailSender = new EmailSender();
     createMail(aluno: Aluno): string{
         if(this.metasInvalidas(aluno)){
-            return "false"
+            return "Metas invalidas"
         }
         const media: Number = this.calcular_media(aluno);
         let situacao: string;

@@ -24,7 +24,7 @@
     <td name="datelist">{{r.dataDeEntrega}}</td>
     <td *ngIf="r.enviado" name="sentlist">Enviado!</td>
     <td *ngIf="!r.enviado" name="sentlist">Não enviado!</td>
-    <td><button>Remover</button></td>
+    <td><button (click)="removeRoteiro(r)">Remover</button></td>
   </tr>
 </table>
 

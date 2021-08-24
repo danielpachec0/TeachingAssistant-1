@@ -41,16 +41,17 @@ export class RoteirosComponent implements OnInit {
     this.roteirosService.deletar(roteiro.nome).subscribe(
       rr => {
         if (rr) {
-          let index = 0;
+          let index = -1;
           for (const r of this.roteiros) {
             if (r.nome === rr) {
               index = this.roteiros.indexOf(r);
             }
           }
-          this.roteiros.splice(index, 1);
+          if (index > -1) {
+            this.roteiros.splice(index, 1);
+          }
         }
-      }, msg => {alert(msg.message); }
-    );
+      }, msg => {alert(msg.message); });
   }
 
   dataInvalida(data: string): boolean {

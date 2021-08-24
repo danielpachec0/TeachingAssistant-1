@@ -54,7 +54,7 @@ defineSupportCode(function ({ Given
     });
 
     Then(/^I receive an error message in regards to roteiro registration$/, async () => {
-        var allmsgs : ElementArrayFinder = element.all(by.name('msgroteiroexistente'));
+        var allmsgs : ElementArrayFinder = element.all(by.id('warning'));
         await assertTamanhoEqual(allmsgs,1);
     });
 

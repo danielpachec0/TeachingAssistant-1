@@ -3,12 +3,12 @@ Feature: As a professor
 
     Scenario: Registering new roteiro
         Given I am at the roteiros page
-        When I register a roteiro "Roteiro1" with limit date "2021-08-23"
-        Then I can see the roteiro "Roteiro1" with limit date "2021-08-23" in the roteiros list
+        When I register a roteiro "Roteiro1" with limit date "2021-08-25"
+        Then I can see the roteiro "Roteiro1" with limit date "2021-08-25" in the roteiros list
 
     Scenario: Trying to register a roteiro with same name
         Given I am at the roteiros page
-        And I have the roteiro "Roteiro2" with limit date "2021-08-24" in the roteiros list
+        And I have the roteiro "Roteiro2" with limit date "2021-08-25" in the roteiros list
         When I register a roteiro "Roteiro2" with limit date "2022-01-01"
         Then I can not see "Roteiro2" with limit date "2022-01-01" in the roteiros list
         And I receive an error message in regards to roteiro registration
