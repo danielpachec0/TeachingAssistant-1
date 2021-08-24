@@ -88,7 +88,7 @@ async function assertEnviarEmail(email) {
     var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
     await aluno.all(by.buttonText('Enviar')).click();
     await $("div[id='sendMessage']").getText().then(function (message){
-        expect(message).to.equal("Relatório enviado com sucesso!");
+        expect(message).to.equal("Relatório enviado com sucesso");
     })
 }
 
@@ -191,7 +191,7 @@ defineSupportCode(function ({ Given, When, Then }) {
         await request(options)
               .then(body => 
                    expect(JSON.stringify(body)).to.equal(
-                       '{"success":"O relatório foi enviado com sucesso!"}'));
+                       '{"success":"O relatório foi enviado com sucesso"}'));
     });
 	Then(/^o sistema falha ao enviar email de relatorio para o aluno com CPF "(\d*)"$/, async (cpf) => {
 		const body = {cpf: cpf};
@@ -199,7 +199,7 @@ defineSupportCode(function ({ Given, When, Then }) {
         await request(options)
               .then(body => 
                    expect(JSON.stringify(body)).to.equal(
-                       '{"failure":"O relatório não pôde ser enviado!"}'));
+                       '{"failure":"O relatório não pôde ser enviado"}'));
     });
 
     Then(/^the system now stores "([^\"]*)" with CPF "(\d*)"$/, async (name, cpf) => {

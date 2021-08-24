@@ -50,7 +50,7 @@ defineSupportCode(function ({ Given
         await request(options)
               .then(body => 
                    expect(JSON.stringify(body)).to.equal(
-                       '{"success":"Os emails foram enviado com sucesso"}'));
+                       '{"success":"Os emails foram enviados com sucesso"}'));
     });
 
     Then(/^I receive an error message in regards to roteiro registration$/, async () => {
