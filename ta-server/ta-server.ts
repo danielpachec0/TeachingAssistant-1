@@ -18,6 +18,7 @@ var cadastroAlunos: CadastroDeAlunos = new CadastroDeAlunos();
 var cadastroRoteiros: CadastroDeRoteiros = new CadastroDeRoteiros();
 var emailNotas: EmailNotas = new EmailNotas();
 var emailRoteiros: EmailRoteiros = new EmailRoteiros();
+var emailSender: EmailSender = new EmailSender();
 
 var allowCrossDomain = function(req: any, res: any, next: any) {
     res.header('Access-Control-Allow-Origin', "*");
@@ -80,7 +81,7 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var cpf: string = <string> req.body.cpf;
   var aluno: Aluno = cadastroAlunos.getAlunosbyCPF(cpf);
-  if(emailNotas.createMail(aluno)){
+  if(emailSender.sendEMail(aluno, "Relaorio",emailNotas.createMail(aluno))){
     res.send({"success": "O relatório foi enviado com sucesso"});
     cadastroAlunos.atualizarEmail(aluno);
   }else{
@@ -93,7 +94,7 @@ taserver.post('/testeEmailRoteiro', function (req: express.Request, res: express
   try {
     for (let j = 0; j < cadastroAlunos.alunos.length; j++) {
       const aluno = cadastroAlunos.alunos[j];
-      emailRoteiros.createMail(roteiro, aluno);
+      emailSender.sendEMail(aluno, "Lembrete Roteiro",emailRoteiros.createMail(roteiro, aluno))
     }
     res.send({"success": "Os emails foram enviados com sucesso"})
   } catch (err) {
@@ -118,7 +119,7 @@ cron.schedule("0 0 * * *", () => {
     if(checkDate(roteiro.dataDeEntrega)){
       for (let j = 0; j < cadastroAlunos.alunos.length; j++) {
         const aluno = cadastroAlunos.alunos[j];
-        emailRoteiros.createMail(roteiro, aluno);
+        emailSender.sendEMail(aluno, "Lembrete de roteiro",emailRoteiros.createMail(roteiro, aluno))
       }
     }
   }

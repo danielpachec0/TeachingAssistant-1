@@ -6,7 +6,8 @@ export class EmailRoteiros{
     emailSender = new EmailSender;
 
     createMail(roteiro: Roteiro, aluno: Aluno){
-        const text: string = `Atenção ${aluno.nome}! O roteiro  ${roteiro.nome} deve ser entregue até o fim do dia:(${roteiro.dataDeEntrega})`;
-        this.emailSender.sendEMail(aluno, "Roteiro", text);
+        return `Atenção ${aluno.nome}! O roteiro  ${roteiro.nome} deve ser entregue até o fim do dia:(${roteiro.dataDeEntrega})`;
+        //const text: string = `Atenção ${aluno.nome}! O roteiro  ${roteiro.nome} deve ser entregue até o fim do dia:(${roteiro.dataDeEntrega})`;
+        //this.emailSender.sendEMail(aluno, "Roteiro", text);
     }
 }

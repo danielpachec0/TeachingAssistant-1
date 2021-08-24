@@ -5,9 +5,9 @@ import { EmailSender } from './email-sender';
 
 export class EmailNotas{
     emailSender = new EmailSender();
-    createMail(aluno: Aluno): boolean{
+    createMail(aluno: Aluno): string{
         if(this.metasInvalidas(aluno)){
-            return false
+            return "false"
         }
         const media: Number = this.calcular_media(aluno);
         let situacao: string;
@@ -18,8 +18,9 @@ export class EmailNotas{
           } else {
             situacao = "Reprovado por média"
           }
-        const text: string = `Sua média final foi: ${media}\nSituação:${situacao}`;
-        return this.emailSender.sendEMail(aluno,"[Média Final]", text);
+        return `Sua média final foi: ${media}\nSituação:${situacao}`;
+        //const text: string = `Sua média final foi: ${media}\nSituação:${situacao}`;
+        //return this.emailSender.sendEMail(aluno,"[Média Final]", text);
     }
 
     private calcular_media(aluno: Aluno): Number {
