@@ -194,8 +194,8 @@ defineSupportCode(function ({ Given, When, Then }) {
                 .then(body => 
                    expect(body.includes(`"cpf":"${cpf}"`)).to.equal(false));
     });
-	//o sistema guarda o aluno "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and notas "5" and "z"
-	Given(/^o sistema guarda o aluno "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" and notas "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
+	//The system keeps the student  "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and grades "5" and "z"
+	Given(/^The system keeps the student  "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" and grades "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
         let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}, "relatorioEnviado": false};
         var options:any = {method: 'POST', uri: (base_url + "aluno"), body:aluno, json: true};
         await request(options)
@@ -214,7 +214,7 @@ defineSupportCode(function ({ Given, When, Then }) {
     });
 	
 	//Then o sistema envia com sucesso o email de relatorio para o aluno with CPF "777"
-    When(/^o sistema envia o email de relatorio para o aluno with CPF "([^\"]*)"$/, async (cpf) => {
+    When(/^The system sends the report email to the student with CPF "([^\"]*)"$/, async (cpf) => {
 		const body = {cpf: cpf};
         var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
         await request(options)
@@ -223,7 +223,7 @@ defineSupportCode(function ({ Given, When, Then }) {
                        '{"success":"O relatório foi enviado com sucesso"}'));
     });
 
-    Then(/^o sistema armazena "([^\"]*)" na variavel "([^\"]*)" do aluno with CPF "([^\"]*)"$/, async (bool, v, cpf) => {
+    Then(/^The system stores "([^\"]*)" in the variable "([^\"]*)" of the student with CPF "([^\"]*)"$/, async (bool, v, cpf) => {
         const response = await request.get(base_url + 'alunos', {json: true});
         expect(response.some((aluno) => aluno.cpf == cpf && aluno.relatorioEnviado.toString() == bool)).to.equal(true);
     })

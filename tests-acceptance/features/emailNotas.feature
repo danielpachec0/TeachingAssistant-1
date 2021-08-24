@@ -12,15 +12,15 @@ Feature: Like a teacher
 		And I see a message "Relatório enviado!" with a green background next to the student with CPF "683"
 
 	Scenario: Aluno com notas preenchidas, service
-		Given o sistema guarda o aluno "Gabriel" with CPF "777" and email "cgcc@cin.ufpe.br" and notas "5" and "6"
-		When o sistema envia o email de relatorio para o aluno with CPF "777"
-		Then o sistema armazena "true" na variavel "emailEnviado" do aluno with CPF "777"
+		Given The system keeps the student  "Gabriel" with CPF "777" and email "cgcc@cin.ufpe.br" and grades "5" and "6"
+		When The system sends the report email to the student with CPF "777"
+		Then The system stores "true" in the variable "emailEnviado" of the student with CPF "777"
 
 	Scenario: Changing student grades, service
-		Given o sistema guarda o aluno "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" and notas "6" and "6"
-		When o sistema envia o email de relatorio para o aluno with CPF "999"
+		Given The system keeps the student  "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" and grades "6" and "6"
+		When The system sends the report email to the student with CPF "999"
 		And the grades of the student "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" are changed to "8" and "8"
-		Then o sistema armazena "false" na variavel "emailEnviado" do aluno with CPF "999"
+		Then The system stores "false" in the variable "emailEnviado" of the student with CPF "999"
 
 	Scenario: Aluno com notas parcialmente preenchidas
 		Given I'm on the student's page
@@ -42,9 +42,9 @@ Feature: Like a teacher
 		And I see a message "Relatório pendente!" com um fundo vermelho ao lado do aluno de CPF "12345678900"
 
 	Scenario: Aluno com email invalido, service
-		Given o sistema guarda o aluno "Gabriel" with CPF "778" and email "cgcc.br" and notas "5" and "6"
+		Given The system keeps the student  "Gabriel" with CPF "778" and email "cgcc.br" and grades "5" and "6"
 		When o sistema falha ao enviar email de relatorio para o aluno with CPF "778"
-		Then o sistema armazena "false" na variavel "emailEnviado" do aluno with CPF "778"
+		Then The system stores "false" in the variable "emailEnviado" of the student with CPF "778"
 
 	Scenario: Aluno com metas invalidas
 		Given I'm on the student's page
@@ -56,6 +56,6 @@ Feature: Like a teacher
 		And I see a message "E-mail ou metas inválidos!" on the screen
 
 	Scenario: Aluno com metas invalidas, service
-		Given o sistema guarda o aluno "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and notas "5" and "z"
+		Given The system keeps the student  "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and grades "5" and "z"
 		When o sistema falha ao enviar email de relatorio para o aluno with CPF "779"
-		Then o sistema armazena "false" na variavel "emailEnviado" do aluno with CPF "779"
+		Then The system stores "false" in the variable "emailEnviado" of the student with CPF "779"
