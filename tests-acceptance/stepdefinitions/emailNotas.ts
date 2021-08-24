@@ -123,7 +123,7 @@ async function assertMensagemEMailAluno(msg, cpf, b: boolean){
 
 defineSupportCode(function ({ Given, When, Then }) {
 
-    Given(/^I'm on the student's page$/, async () => {
+    Given(/^I am at the student's page$/, async () => {
         await browser.get("http://localhost:4200/");
         await expect(browser.getTitle()).to.eventually.equal('TaGui');
         await $("a[name='alunos']").click();
@@ -223,7 +223,7 @@ defineSupportCode(function ({ Given, When, Then }) {
                        '{"success":"O relatório foi enviado com sucesso"}'));
     });
 
-    Then(/^The system stores "([^\"]*)" in the variable "([^\"]*)" of the student with CPF "([^\"]*)"$/, async (bool, v, cpf) => {
+    Then(/^The system stores "([^\"]*)" in the attribute relatorioEnviado of the student with CPF "([^\"]*)"$/, async (bool, cpf) => {
         const response = await request.get(base_url + 'alunos', {json: true});
         expect(response.some((aluno) => aluno.cpf == cpf && aluno.relatorioEnviado.toString() == bool)).to.equal(true);
     })
