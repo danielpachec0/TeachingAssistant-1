@@ -23,6 +23,12 @@ export class CadastroDeAlunos {
      return result;
    }
 
+   atualizarEmail(aluno: Aluno): Aluno {
+     var result: Aluno = this.alunos.find(a => a.cpf == aluno.cpf);
+     if (result) result.relatorioEnviado = true;
+     return result;
+   }
+
     getAlunos(): Aluno[] {
      return this.alunos;
    }

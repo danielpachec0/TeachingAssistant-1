@@ -27,3 +27,12 @@ th {
   font-size: 2rem;
 }
 
+#sent{
+  background-color: #ccffcd;
+}
+
+#notSent{
+  background-color: #ff8787;
+}
+
+

@@ -25,12 +25,14 @@ import { AlunoService } from './aluno.service';
         } else {
           this.message = 'Relatório enviado com sucesso!';
           this.success = true;
+          this.updateAlunos();
         }
-          this.showMessage();}
+          this.showMessage(); }
       );
     }
 
     atualizarAluno(aluno: Aluno): void {
+      aluno.relatorioEnviado = false;
       this.alunoService.atualizar(aluno).subscribe(
          (a) => { if (a == null) { alert('Unexpected fatal error trying to update student information! ' +
            'Please contact the systems administratos.');
@@ -46,6 +48,14 @@ import { AlunoService } from './aluno.service';
 
     showMessage(): void {
       this.showmessage = true;
+    }
+
+    updateAlunos(): void {
+      this.alunoService.getAlunos()
+        .subscribe(
+          (as) =>  { this.alunos = as; },
+          (msg) => { alert(msg.message); }
+        );
     }
 
     ngOnInit(): void {

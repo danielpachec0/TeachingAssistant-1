@@ -16,8 +16,6 @@ var taserver = express();
 
 var cadastroAlunos: CadastroDeAlunos = new CadastroDeAlunos();
 var cadastroRoteiros: CadastroDeRoteiros = new CadastroDeRoteiros();
-var cadastro: CadastroDeAlunos = new CadastroDeAlunos();
-var emailSender: EmailSender = new EmailSender();
 var emailNotas: EmailNotas = new EmailNotas();
 var emailRoteiros: EmailRoteiros = new EmailRoteiros();
 
@@ -82,9 +80,9 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
 taserver.post("/sendnotas", function (req: express.Request, res: express.Response) {
   var cpf: string = <string> req.body.cpf;
   var aluno: Aluno = cadastroAlunos.getAlunosbyCPF(cpf);
-  console.log(aluno);
   if(emailNotas.createMail(aluno)){
     res.send({"success": "O relatório foi enviado com sucesso"});
+    cadastroAlunos.atualizarEmail(aluno);
   }else{
     res.send({"failure": "O relatório não pôde ser enviado"});
   }

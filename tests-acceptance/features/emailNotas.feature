@@ -9,10 +9,12 @@ Scenario: Aluno com notas preenchidas
 	And eu clico no botão "Enviar" referente ao aluno de CPF "683"
 	Then eu posso ver o aluno com CPF "683" com notas "8" e "7" respectivamente
 	And eu vejo a mensagem "Relatório enviado com sucesso!" na tela
+	And eu vejo a mensagem "Relatório enviado!" com um fundo verde ao lado do aluno de CPF "683"
 
 Scenario: Aluno com notas preenchidas, serviço
 	Given o sistema guarda o aluno "Gabriel" com CPF "777" e email "cgcc@cin.ufpe.br" e notas "5" e "6"
-	Then o sistema envia com sucesso o email de relatorio para o aluno com CPF "777"
+	When o sistema envia o email de relatorio para o aluno com CPF "777"
+	Then o sistema armazena "true" na variavel "emailEnviado" do aluno com CPF "777"
 
 Scenario: Aluno com notas parcialmente preenchidas
 	Given eu estou na pagina do aluno
@@ -31,6 +33,7 @@ Scenario: Aluno com email invalido
 	And eu clico no botão "Enviar" referente ao aluno de CPF "12345678900"
 	Then eu posso ver o aluno com CPF "12345678900" com notas "5" e "1" respectivamente
 	And eu vejo a mensagem "E-mail ou metas inválidos!" na tela
+	And eu vejo a mensagem "Relatório pendente!" com um fundo vermelho ao lado do aluno de CPF "12345678900"
 
 Scenario: Aluno com email invalido, serviço
 	Given o sistema guarda o aluno "Gabriel" com CPF "778" e email "cgcc.br" e notas "5" e "6"

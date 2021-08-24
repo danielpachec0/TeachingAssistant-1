@@ -35,8 +35,8 @@ export class AlunoService {
                );
   }
 
-  enviarRelatorio(cpf: String): Observable<any> {
-	const body = {cpf: cpf};
+  enviarRelatorio(cpf: string): Observable<any> {
+	  const body = {cpf: cpf};
     return this.http.post<any>(this.taURL + `/sendnotas`, body, {headers: this.headers})
       .pipe(
         retry(2),
