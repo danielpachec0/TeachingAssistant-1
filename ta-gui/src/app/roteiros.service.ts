@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 
 import {Roteiro} from '../../../common/roteiro';
-import {Aluno} from "../../../common/aluno";
 
 @Injectable()
 export class RoteirosService {
@@ -23,9 +22,17 @@ export class RoteirosService {
   }
 
   atualizar(roteiro: Roteiro): Observable<Roteiro> {
-    return this.http.put<any>(this.taURL + '/roteiro' , JSON.stringify(roteiro), {headers: this.headers})          .pipe(
+    return this.http.put<any>(this.taURL + '/roteiro' , JSON.stringify(roteiro), {headers: this.headers}).pipe(
       retry(2),
       map( res => {if (res.success) {return roteiro; } else {return null; }} )
+    );
+  }
+
+  deletar(nome: string): Observable<string> {
+    const body = {nome: nome};
+    return this.http.request<any>('delete', this.taURL + '/roteiro', {headers: this.headers, body}).pipe(
+      retry(2),
+      map( res => {if (res.success) {return nome; } else {return null; }})
     );
   }
 

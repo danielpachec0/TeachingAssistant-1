@@ -1,17 +1,15 @@
-<html (mousemove)="onMove()">
+<html>
 
 <table>
   <tr>
     <td><label>Nome </label></td>
     <td><input [(ngModel)]="roteiro.nome" name="namebox"></td>
-    <td name="msgroteiroexistente" *ngIf="roteiroduplicado">
-      Já existe um roteiro com este nome
-    </td>
-    <td><button (click)="criarRoteiro(roteiro)">Adicionar</button></td>
+    <td><button (focusout)="removeMessage(); onFocusOut()" (click)="criarRoteiro(roteiro)">Adicionar</button></td>
   </tr>
   <tr>
     <td><label>Data Limite</label></td>
     <td><input type="date" [(ngModel)]="roteiro.dataDeEntrega" name="datebox"></td>
+    <td id="warning">Insira uma data pelo menos 1 dia após o dia atual!</td>
   </tr>
 </table>
 
@@ -19,13 +17,17 @@
   <tr *ngIf="roteiros.length > 0">
     <th>Nome</th>
     <th>Data de entrega</th>
-
+    <th>Status</th>
   </tr>
   <tr *ngFor="let r of roteiros" name="roteirolist">
     <td name="nomelist">{{r.nome}}</td>
     <td name="datelist">{{r.dataDeEntrega}}</td>
+    <td *ngIf="r.enviado" name="sentlist">Enviado!</td>
+    <td *ngIf="!r.enviado" name="sentlist">Não enviado!</td>
+    <td><button>Remover</button></td>
   </tr>
 </table>
 
-
+<div id="duplicateMessage" *ngIf="roteiroduplicado">Já existe um roteiro com este nome!</div>
+<div id="sendMessage" [ngStyle]="{'visibility': (showmessage && !roteiroduplicado) ? 'visible' : 'hidden'}">Data inválida!</div>
 </html>
