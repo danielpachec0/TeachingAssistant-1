@@ -23,14 +23,13 @@ export class EmailNotas{
     }
 
     private calcular_media(aluno: Aluno): Number {
-        // var mean = 0
-        // var length = Object.keys(aluno.metas).length
-        // for (let key in aluno.metas) {
-        //   let value = +aluno.metas[key];
-        //   mean += value
-        // }
-        // return mean/length
-        return 10
+        var mean = 0
+        var length = Object.keys(aluno.metas).length
+        for (let key in aluno.metas) {
+          let value = +aluno.metas[key];
+          mean += value
+        }
+        return mean/length
     }
 
     private metasInvalidas(aluno: Aluno): boolean {
