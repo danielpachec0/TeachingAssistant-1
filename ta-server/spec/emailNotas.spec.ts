@@ -50,6 +50,6 @@ describe("O emailNotas de emailNotas", () => {
         aluno.metas["nota1"] = "-11";
         aluno.metas["nota2"] = "3312";
         aluno.metas["nota2"] = "3312AAS";
-        expect(emailNotas.createMail(aluno)).toBe("false");
+        expect(emailNotas.createMail(aluno)).toBe("Metas invalidas");
     })
 })
