@@ -5,12 +5,20 @@
     <th>e-mail</th>
     <th>Requisitos</th>
     <th>Gerência de Configuração</th>
+    <th>Relatório</th>
  </tr>
- <tr *ngFor="let a of alunos">
-    <td>{{a.nome}}</td>
-    <td>{{a.cpf}}</td>
-    <td>{{a.email}}</td>
-    <td class="meta"><input [(ngModel)]="a.metas['requisitos']" (change)="atualizarAluno(a)"></td>
-    <td class="meta"><input [(ngModel)]="a.metas['gerDeConfiguracao']" (change)="atualizarAluno(a)"></td>
+ <tr *ngFor="let a of alunos" name="metaslist">
+    <td name="nomelist">{{a.nome}}</td>
+    <td name="cpflist">{{a.cpf}}</td>
+    <td name="emaillist">{{a.email}}</td>
+    <td class="meta"><input [(ngModel)]="a.metas['requisitos']" (ngModelChange)="atualizarAluno(a)" name="requisitosBox"></td>
+    <td class="meta"><input [(ngModel)]="a.metas['gerDeConfiguracao']" (ngModelChange)="atualizarAluno(a)" name="gerDeConfiguracaoBox"></td>
+    <td><button (focusout)="removeMessage()" (click)="enviarRelatorio(a);" [disabled]="a.metas['requisitos'] == undefined ||
+    a.metas['gerDeConfiguracao'] == undefined || !a.metas['requisitos'].trim() || !a.metas['gerDeConfiguracao'].trim()">Enviar</button></td>
+    <td id="sent" *ngIf="a.relatorioEnviado">Relatório enviado!</td>
+    <td id="notSent" *ngIf="!a.relatorioEnviado">Relatório pendente!</td>
  </tr>
  </table>
+<div id="warning">O botão de envio ficará disponível após o preenchimento de todos os campos de nota</div>
+<div id="sendMessage" [ngStyle]="{'visibility': (showmessage) ? 'visible' : 'hidden', 'color': (success) ? 'lime' : 'red'}">
+  {{this.message}}</div>

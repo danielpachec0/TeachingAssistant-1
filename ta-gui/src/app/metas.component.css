@@ -21,3 +21,18 @@ th {
    border: none;
    width: 40px;
  }
+
+#sendMessage{
+  font-weight: 900;
+  font-size: 2rem;
+}
+
+#sent{
+  background-color: #ccffcd;
+}
+
+#notSent{
+  background-color: #ff8787;
+}
+
+

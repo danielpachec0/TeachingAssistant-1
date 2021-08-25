@@ -3,16 +3,19 @@ export class Aluno {
   cpf: string;
   email: string;
   metas: Map<string,string>;
+  relatorioEnviado: boolean;
 
   constructor() {
     this.clean();
   }
+
 
   clean(): void {
     this.nome = "";
     this.cpf = "";
     this.email = "";
     this.metas = new Map<string,string>();
+    this.relatorioEnviado = false;
   }
 
   clone(): Aluno {
@@ -26,6 +29,7 @@ export class Aluno {
     this.cpf = from.cpf;
     this.email = from.email;
     this.copyMetasFrom(from.metas);
+    this.relatorioEnviado = from.relatorioEnviado;
   }
 
   copyMetasFrom(from: Map<string,string>): void {
