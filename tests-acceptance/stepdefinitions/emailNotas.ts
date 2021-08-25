@@ -38,17 +38,6 @@ async function assertElementsWithSameCPFAndNameAndEmailMETAS(n,cpf,name,email) {
     await assertTamanhoEqual(samecpfsandnameandemail,n);
 }
 
-async function assertElementsWithSameCPFAndName(n,cpf,name) { 
-    var allalunos : ElementArrayFinder = element.all(by.name('alunolist'));
-    var samecpfsandname = allalunos.filter(elem => pAND(sameCPF(elem,cpf),sameName(elem,name)));
-    await assertTamanhoEqual(samecpfsandname,n);
-}
-
-async function assertElementsWithSameCPF(n,cpf) {
-    var allalunos : ElementArrayFinder = element.all(by.name('alunolist'));
-    var samecpfs = allalunos.filter(elem => sameCPF(elem,cpf));
-    await assertTamanhoEqual(samecpfs,n); 
-}
 async function assertElementsWithSameCPFMETAS(n,cpf) {
     var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
     var samecpfs = allalunos.filter(elem => sameCPF(elem,cpf));
@@ -82,23 +71,6 @@ async function assertBotaoPressionado(nomebotao, cpf) {
     var aluno = allalunos.filter(elem => sameCPF(elem,cpf)).get(0);
     await aluno.all(by.buttonText(nomebotao)).click();
 }
-
-async function assertEnviarEmail(email) {
-	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
-    var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
-    await aluno.all(by.buttonText('Enviar')).click();
-    await $("div[id='sendMessage']").getText().then(function (message){
-        expect(message).to.equal("Relatório enviado com sucesso");
-    })
-}
-
-async function assertEnviarEmailBloqueado(email) {
-	var allalunos : ElementArrayFinder = element.all(by.name('metaslist'));
-    var aluno = allalunos.filter(elem => sameEmail(elem,email)).get(0);
-	await aluno.all(by.buttonText('Enviar')).click();
-    await $("div[id='sendMessage']").getText().then(function (message){
-        expect(message).to.equal("");
-    })}
 
 async function assertMensagemEMail(msg){
     await $("div[id='sendMessage']").getText().then(function (message){
@@ -134,14 +106,6 @@ defineSupportCode(function ({ Given, When, Then }) {
         await $("a[name='metas']").click();
     })
 
-    Given(/^eu nao posso ver um aluno with CPF "(\d*)" on the student list$/, async (cpf) => {
-        await assertElementsWithSameCPF(0,cpf);
-    });
-
-    When(/^eu tento cadastrar o aluno "([^\"]*)" with CPF "(\d*)" and email "([^\"]*)"$/, async (name, cpf,email) => {
-        await criarAluno(name,cpf,email);
-    });
-
     Then(/^I can see the student "([^\"]*)" with CPF "(\d*)" and email "([^\"]*)" on the student list$/, async (name, cpf,email) => {
 		await criarAluno(name,cpf,email);
         await assertElementsWithSameCPFAndNameAndEmail(1,cpf,name,email);
@@ -154,14 +118,6 @@ defineSupportCode(function ({ Given, When, Then }) {
 	Then(/^I can see the student with CPF "([^\"]*)" with grades "([^\"]*)" and "([^\"]*)" respectively$/, async (cpf, notaReq,notaConf) => {
         await assertElementsWithSameCPFMETAS(1,cpf);
 		await assertNotas(cpf,notaReq,notaConf);
-    });
-
-	Then(/^eu envio um email de resultado para "([^\"]*)"$/, async (email) => {
-		await assertEnviarEmail(email);
-    });
-
-	Then(/^eu não consigo enviar um email de resultado para "([^\"]*)"$/, async (email) => {
-		await assertEnviarEmailBloqueado(email);
     });
 
 	//I assign to the student "Charles" with CPF "683" the grades "8" and "7" respectively
@@ -195,7 +151,7 @@ defineSupportCode(function ({ Given, When, Then }) {
                    expect(body.includes(`"cpf":"${cpf}"`)).to.equal(false));
     });
 	//The system keeps the student  "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and grades "5" and "z"
-	Given(/^The system keeps the student  "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" and grades "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
+	Given(/^the system keeps the student  "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" and grades "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
         let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}, "relatorioEnviado": false};
         var options:any = {method: 'POST', uri: (base_url + "aluno"), body:aluno, json: true};
         await request(options)
@@ -204,7 +160,7 @@ defineSupportCode(function ({ Given, When, Then }) {
                        '{"success":"O aluno foi cadastrado com sucesso"}'));
     });
 
-    When(/^The grades of the student "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" are changed to "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
+    When(/^the grades of the student "([^\"]*)" with CPF "([^\"]*)" and email "([^\"]*)" are changed to "([^\"]*)" and "([^\"]*)"$/, async (name, cpf, email, notaReq, notaConf) => {
         let aluno = {"nome": name, "cpf" : cpf, "email": email,"metas":{"requisitos":notaReq,"gerDeConfiguracao":notaConf}, "relatorioEnviado": false};
         var options:any = {method: 'PUT', uri: (base_url + "aluno"), body:aluno, json: true};
         await request(options)
@@ -214,7 +170,7 @@ defineSupportCode(function ({ Given, When, Then }) {
     });
 	
 	//Then o sistema envia com sucesso o email de relatorio para o aluno with CPF "777"
-    When(/^The system sends the report email to the student with CPF "([^\"]*)"$/, async (cpf) => {
+    When(/^the system sends the report email to the student with CPF "([^\"]*)"$/, async (cpf) => {
 		const body = {cpf: cpf};
         var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
         await request(options)
@@ -223,12 +179,12 @@ defineSupportCode(function ({ Given, When, Then }) {
                        '{"success":"O relatório foi enviado com sucesso"}'));
     });
 
-    Then(/^The system stores "([^\"]*)" in the attribute relatorioEnviado of the student with CPF "([^\"]*)"$/, async (bool, cpf) => {
+    Then(/^the system stores "([^\"]*)" in the attribute relatorioEnviado of the student with CPF "([^\"]*)"$/, async (bool, cpf) => {
         const response = await request.get(base_url + 'alunos', {json: true});
         expect(response.some((aluno) => aluno.cpf == cpf && aluno.relatorioEnviado.toString() == bool)).to.equal(true);
     })
 
-	When(/^System fails to send report email to student with CPF "(\d*)"$/, async (cpf) => {
+	When(/^the system fails to send report email to student with CPF "(\d*)"$/, async (cpf) => {
 		const body = {cpf: cpf};
         var options:any = {method: 'POST', uri: (base_url + "sendnotas"), body:body, json: true};
         await request(options)

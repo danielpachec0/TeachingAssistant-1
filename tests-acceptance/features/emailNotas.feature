@@ -12,15 +12,15 @@ Feature: Like a teacher
 		And I see a message "Relatório enviado!" with a green background next to the student with CPF "683"
 
 	Scenario: Student with completed grades, service
-		Given The system keeps the student  "Gabriel" with CPF "777" and email "cgcc@cin.ufpe.br" and grades "5" and "6"
-		When The system sends the report email to the student with CPF "777"
-		Then The system stores "true" in the attribute relatorioEnviado of the student with CPF "777"
+		Given the system keeps the student  "Gabriel" with CPF "777" and email "cgcc@cin.ufpe.br" and grades "5" and "6"
+		When the system sends the report email to the student with CPF "777"
+		Then the system stores "true" in the attribute relatorioEnviado of the student with CPF "777"
 
 	Scenario: Changing student grades, service
-		Given The system keeps the student  "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" and grades "6" and "6"
-		When The system sends the report email to the student with CPF "999"
-		And The grades of the student "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" are changed to "8" and "8"
-		Then The system stores "false" in the attribute relatorioEnviado of the student with CPF "999"
+		Given the system keeps the student  "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" and grades "6" and "6"
+		When the system sends the report email to the student with CPF "999"
+		And the grades of the student "Daniel" with CPF "999" and email "dap5@cin.ufpe.br" are changed to "8" and "8"
+		Then the system stores "false" in the attribute relatorioEnviado of the student with CPF "999"
 
 	Scenario: Student with partially filled grades
 		Given I am at the student's page
@@ -42,9 +42,9 @@ Feature: Like a teacher
 		And I see a message "Relatório pendente!" with a red background next to the student with CPF "12345678900"
 
 	Scenario: Student with invalid email, service
-		Given The system keeps the student  "Gabriel" with CPF "778" and email "cgcc.br" and grades "5" and "6"
-		When System fails to send report email to student with CPF "778"
-		Then The system stores "false" in the attribute relatorioEnviado of the student with CPF "778"
+		Given the system keeps the student  "Gabriel" with CPF "778" and email "cgcc.br" and grades "5" and "6"
+		When the system fails to send report email to student with CPF "778"
+		Then the system stores "false" in the attribute relatorioEnviado of the student with CPF "778"
 
 	Scenario: Student with Invalid Goals
 		Given I am at the student's page
@@ -56,6 +56,6 @@ Feature: Like a teacher
 		And I see a message "Metas inválidas!" on the screen
 
 	Scenario: Student with Invalid Goals, service
-		Given The system keeps the student  "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and grades "5" and "z"
-		When System fails to send report email to student with CPF "779"
-		Then The system stores "false" in the attribute relatorioEnviado of the student with CPF "779"
+		Given the system keeps the student  "Gabriel" with CPF "779" and email "cgcc@cin.ufpe.br" and grades "5" and "z"
+		When the system fails to send report email to student with CPF "779"
+		Then the system stores "false" in the attribute relatorioEnviado of the student with CPF "779"
