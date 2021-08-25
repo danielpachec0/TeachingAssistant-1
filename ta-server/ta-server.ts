@@ -125,11 +125,11 @@ function checkDate(dataRoteiro: string): boolean{
   return false;
 }
 
-cron.schedule("0 0 * * *", () => {
+cron.schedule("* * * * *", () => {
   console.log("teste");
   for (let i = 0; i < cadastroRoteiros.roteiros.length; i++) {
     const roteiro = cadastroRoteiros.roteiros[i];
-    if(checkDate(roteiro.dataDeEntrega)){
+    if(checkDate(roteiro.dataDeEntrega ) && roteiro.enviado == false){
       for (let j = 0; j < cadastroAlunos.alunos.length; j++) {
         const aluno = cadastroAlunos.alunos[j];
         emailSender.sendEMail(aluno, "Lembrete de roteiro",emailRoteiros.createMail(roteiro, aluno))
