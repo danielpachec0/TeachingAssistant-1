@@ -30,6 +30,28 @@ describe("O servidor", () => {
             );
  })
 
+   it("Adciona um roteiro remove o mesmo roteiro depois", () => {
+      var options:any = {method: 'POST', uri: (base_url + "roteiro"), body:{nome: "roteiro0", dataDeEntrega: "10-10-2021"}, json: true};
+      return request(options)
+         .then(body => {
+            expect(body).toEqual({"success": "O roteiro foi cadastrado com sucesso"});
+               var options2:any = {method: 'DELETE', uri: (base_url + "roteiro"), body:{nome: "roteiro0"}, json: true};
+               return request(options2).then( body => {
+                  expect(body).toEqual({ "success": 'O roteiro foi removido com sucesso' });
+                  return request.get(base_url + "alunos")
+                  .then(body =>  
+                     expect(body).toBe("[]")
+                  )
+                  .catch(e => 
+                     expect(e).toEqual(null)
+                  );
+               });
+         }    
+      ).catch(e =>
+         expect(e).toEqual(null)
+      )
+   })
+
   it("só cadastra alunos", () => {
     var options:any = {method: 'POST', uri: (base_url + "aluno"), body:{name: "Mari", cpf: "962"}, json: true};
     return request(options)
@@ -97,6 +119,6 @@ describe("O servidor", () => {
              .catch(err => {
                 expect(err).toEqual(null)
              });
-})
+   })
 
 })
